@@ -31,6 +31,8 @@ const start = async () => {
 
     const { useAuthFromDatabase } = new Auth(helper.config.session)
 
+    console.log(helper.config.session)
+
     const { saveState, state, clearState } = await useAuthFromDatabase()
 
     const client = Baileys({

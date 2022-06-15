@@ -123,6 +123,19 @@ module.exports = class MessageHandler {
      */
 
     aliases = new Map()
+
+    /**
+     * @param {{group: string, jid: string}} options
+     * @returns {Promise<boolean>}
+     */
+
+    isAdmin = async (options) => {
+        const data = (await this.client.groupMetadata(options.group)).participants
+        const index = data.findIndex((x) => x.id === options.jid)
+        if (index < -1) return false
+        const admin = !data[index] || !data[index].admin || data[index].admin === null ? false : true
+        return admin
+    }
 }
 
 /**

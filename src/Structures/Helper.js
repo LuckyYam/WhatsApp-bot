@@ -26,6 +26,12 @@ module.exports = class Helper {
     DB = new Database()
 
     /**
+     * @type {Map<string, Buffer>}
+     */
+
+    assets = new Map()
+
+    /**
      * @param {string} text
      * @param {boolean} error
      * @returns {void}

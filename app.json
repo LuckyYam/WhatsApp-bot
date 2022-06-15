@@ -7,6 +7,7 @@
     "whatsapp-bot",
     "whatsapp-sticker-bot"
   ],
+  "logo": "https://raw.githubusercontent.com/LuckyYam/WhatsApp-bot/master/assets/images/whatsapp-bot.png",
   "website": "https://github.com/LuckyYam/WhatsApp-bot#readme",
   "repository": "https://github.com/LuckyYam/WhatsApp-bot.git",
   "success_url": "/",
