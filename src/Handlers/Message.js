@@ -49,6 +49,8 @@ module.exports = class MessageHandler {
                 M.sender.username
             )} in ${chalk.blueBright(title)}`
         )
+        const { ban } = await this.helper.DB.getUser(M.sender.jid)
+        if (ban) return void M.reply('You are banned from using commands')
         const cmd = args[0].toLowerCase().slice(prefix.length)
         const command = this.commands.get(cmd) || this.aliases.get(cmd)
         if (!command) return void M.reply('No such command, Baka!')
