@@ -7,6 +7,7 @@ const mongoose = require('mongoose')
 const Message = require('./Structures/Message')
 const MessageHandler = require('./Handlers/Message')
 const AssetHandler = require('./Handlers/Asset')
+const CallHandler = require('./Handlers/Call')
 const Helper = require('./Structures/Helper')
 const Server = require('./Structures/Server')
 const Auth = require('./Structures/Auth')
@@ -46,6 +47,8 @@ const start = async () => {
 
     const messageHandler = new MessageHandler(client, helper)
 
+    const callHandler = new CallHandler(client, helper)
+
     new AssetHandler(helper).loadAssets()
 
     messageHandler.loadCommands()
@@ -54,6 +57,8 @@ const start = async () => {
         const M = await new Message(messages[0], client).simplifyMessage()
         await messageHandler.handleMessage(M)
     })
+
+    client.ws.on('CB:call', async (call) => await callHandler.handleCall(call))
 
     client.ev.on('contacts.update', async (contacts) => await helper.contact.saveContacts(contacts))
 
