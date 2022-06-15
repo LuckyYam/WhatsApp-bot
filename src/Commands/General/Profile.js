@@ -42,7 +42,7 @@ module.exports = class command extends Command {
             undefined,
             undefined,
             `🏮 *Username:* ${username}\n\n🎫 *Bio:* ${bio}\n\n🌟 *Experience:* ${experience}\n\n👑 *Admin:* ${admin}\n\n🟥 *Banned:* ${this.helper.utils.capitalize(
-                `${ban}`
+                `${ban || false}`
             )}`
         )
     }

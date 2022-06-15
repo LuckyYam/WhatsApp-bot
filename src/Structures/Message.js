@@ -148,12 +148,7 @@ module.exports = class Message {
                 gifPlayback: gif,
                 mimetype,
                 mentions,
-                jpegThumbnail:
-                    type === 'image' && !thumbnail
-                        ? content.toString('base64')
-                        : thumbnail
-                        ? thumbnail.toString('base64')
-                        : undefined,
+                jpegThumbnail: thumbnail,
                 fileName
             },
             {
