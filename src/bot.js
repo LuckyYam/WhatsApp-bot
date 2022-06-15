@@ -6,6 +6,7 @@ const qr = require('qr-image')
 const mongoose = require('mongoose')
 const Message = require('./Structures/Message')
 const MessageHandler = require('./Handlers/Message')
+const AssetHandler = require('./Handlers/Asset')
 const Helper = require('./Structures/Helper')
 const Server = require('./Structures/Server')
 const Auth = require('./Structures/Auth')
@@ -44,6 +45,8 @@ const start = async () => {
     })
 
     const messageHandler = new MessageHandler(client, helper)
+
+    new AssetHandler(helper).loadAssets()
 
     messageHandler.loadCommands()
 
