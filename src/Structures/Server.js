@@ -10,11 +10,12 @@ module.exports = class Server {
          * @type {Helper}
          */
         this.helper = helper
-
+        this.app.use(express.static(join(__dirname, '..', '..', 'public')))
         this.app.get('/', (req, res) => {
-            res.setHeader('Content-Type', 'text/plain')
-            res.write('Go to /wa/qr?session=:session to authenicate')
-            res.end()
+                res.sendFile("index.html");
+//             res.setHeader('Content-Type', 'text/plain')
+//             res.write('Go to /wa/qr?session=:session to authenicate')
+//             res.end()
         })
 
         this.app.get('/wa/qr', (req, res) => {
