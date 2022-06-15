@@ -28,7 +28,7 @@ module.exports = class command extends Command {
             )
         const actions = ['ban', 'unban']
         const action = flags[0].split('=')[1]
-        if (!action)
+        if (!action || action === '')
             return void M.reply(
                 `Provide the action of the ban. Example: *${this.helper.config.prefix}ban --action=ban*`
             )

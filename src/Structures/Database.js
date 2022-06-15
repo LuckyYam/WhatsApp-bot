@@ -1,4 +1,4 @@
-const { userSchema, groupSchema, contactSchema, sessionSchema } = require('../Database')
+const { userSchema, groupSchema, contactSchema, sessionSchema, commandSchema } = require('../Database')
 
 module.exports = class Database {
     constructor() {}
@@ -13,16 +13,6 @@ module.exports = class Database {
         (await new this.user({
             jid
         }).save())
-
-    /**
-     * @param {string} jid
-     * @param {'ban' | 'unban'} update
-     */
-
-    updateUserBanStatus = async (jid, update = 'ban') => {
-        await this.getUser(jid)
-        await this.user.updateOne({ jid }, { $set: { ban: update === 'ban' ? true : false } })
-    }
 
     /**
      * @param {string} jid
@@ -67,6 +57,20 @@ module.exports = class Database {
 
     getSession = async (sessionId) => await this.session.findOne({ sessionId })
 
+    /**
+     * @returns {Promise<{ command: string, reason: string, time: string, disabledBy: string }[]>}
+     */
+
+    getDisabledCommands = async () => {
+        let result = await this.disabledCommands.findOne({ title: 'commands' })
+        if (!result)
+            result = await new this.disabledCommands({
+                title: 'commands',
+                disabledCommands: []
+            }).save()
+        return result.disabledCommands
+    }
+
     user = userSchema
 
     group = groupSchema
@@ -74,6 +78,8 @@ module.exports = class Database {
     contact = contactSchema
 
     session = sessionSchema
+
+    disabledCommands = commandSchema
 }
 
 /**
