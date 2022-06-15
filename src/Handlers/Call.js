@@ -27,7 +27,7 @@ module.exports = class CallHandler {
         if (call.content[0].tag !== 'offer') return void null
         const caller = call.content[0].attrs['call-creator']
         const { username } = this.helper.contact.getContact(caller)
-        this.helper.log(`${chalk.cyanBright('[CALL]')} from ${chalk.blueBright(username)}`)
+        this.helper.log(`${chalk.cyanBright('Call')} from ${chalk.blueBright(username)}`)
         await this.client.sendMessage(caller, {
             text: 'You are now banned'
         })
