@@ -40,7 +40,7 @@
  - Written in [JavaScript](https://www.javascript.com/)
  - Built with [Baileys](https://github.com/adiwajshing/baileys) (A Lightweight full-featured WhatsApp Library)
  - Database handled via [MongoDB](https://www.mongodb.com/)
- - Self Auth restoration
+ - Self-Auth restoration
 
  ## 📙 Guide
 
