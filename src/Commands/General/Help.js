@@ -38,7 +38,7 @@ module.exports = class command extends Command {
                 const categoryCommands = []
                 const filteredCommands = commands.filter((command) => command.data.config.category === category)
                 text += `\n\n*━━━❰ ${this.helper.utils.capitalize(category)} ❱━━━*\n\n`
-                filteredCommands.forEach((command) => categoryCommands.push(command))
+                filteredCommands.forEach((command) => categoryCommands.push(command.data.name))
                 text += `\`\`\`${categoryCommands.join(', ')}\`\`\``
             }
             text += `\n\n📕 *Note:* Use ${this.helper.config.prefix}help <command_name> for more info of a specific command. Example: *${this.helper.config.prefix}help hello*`
