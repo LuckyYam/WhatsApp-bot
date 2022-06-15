@@ -61,7 +61,7 @@ module.exports = class MessageHandler {
         try {
             await command.execute(M, this.formatArgs(args))
         } catch (error) {
-            this.helper.log(err.message, true)
+            this.helper.log(error.message, true)
         }
     }
 
