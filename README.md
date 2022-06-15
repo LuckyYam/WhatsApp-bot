@@ -10,7 +10,7 @@
   
 </a>
   
-<a href='https://github.com/LuckyYam/Whatsapp-bot/blob/main/LICENSE'>
+<a href='https://github.com/LuckyYam/Whatsapp-bot/blob/master/LICENSE'>
   
 <img src='https://img.shields.io/github/license/LuckyYam/WhatsApp-bot?color=%231e81b0&style=for-the-badge'>
   
