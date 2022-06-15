@@ -54,6 +54,14 @@ module.exports = class MessageHandler {
         const cmd = args[0].toLowerCase().slice(prefix.length)
         const command = this.commands.get(cmd) || this.aliases.get(cmd)
         if (!command) return void M.reply('No such command, Baka!')
+        const disabledCommands = await this.helper.DB.getDisabledCommands()
+        const index = disabledCommands.findIndex((CMD) => CMD.command === command.name)
+        if (index >= 0)
+            return void M.reply(
+                `*${this.helper.utils.capitalize(cmd)}* is currently disabled by *${
+                    disabledCommands[index].disabledBy
+                }* in *${disabledCommands[index].time} (GMT)*. ❓ *Reason:* ${disabledCommands[index].reason}`
+            )
         if (command.config.category === 'dev' && !this.helper.config.mods.includes(M.sender.jid))
             return void M.reply('This command can only be used by the MODS')
         if (M.chat === 'dm' && !command.config.dm) return void M.reply('This command can only be used in groups')

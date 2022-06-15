@@ -19,7 +19,7 @@ module.exports = class command extends Command {
      */
 
     execute = async (M, args) => {
-        const { flags, context } = args
+        let { flags, context } = args
         flags.forEach((flag) => (context = context.replace(flag, '')))
         const commandFlag = flags.filter((flag) => flag.startsWith('--command'))
         const stateFlag = flags.filter((flag) => flag.startsWith('--state'))
