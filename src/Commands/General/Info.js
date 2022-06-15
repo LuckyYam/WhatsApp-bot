@@ -41,10 +41,12 @@ module.exports = class command extends Command {
                 caption: text,
                 jpegThumbnail: image?.toString('base64'),
                 contextInfo: {
-                    title: name,
-                    mediaType: 1,
-                    thumbnail: image,
-                    sourceUrl: homepage
+                    externalAdReply: {
+                        title: name,
+                        mediaType: 1,
+                        thumbnail: image,
+                        sourceUrl: homepage
+                    }
                 }
             },
             {
