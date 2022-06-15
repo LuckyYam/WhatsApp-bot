@@ -10,13 +10,7 @@ module.exports = class Server {
          * @type {Helper}
          */
         this.helper = helper
-
-        this.app.get('/', (req, res) => {
-            res.setHeader('Content-Type', 'text/plain')
-            res.write('Go to /wa/qr?session=:session to authenicate')
-            res.end()
-        })
-
+        this.app.use('/', express.static(join(__dirname, '..', '..', 'public')))
         this.app.get('/wa/qr', (req, res) => {
             const { session } = req.query
             if (!session)
