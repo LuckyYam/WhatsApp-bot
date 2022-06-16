@@ -24,7 +24,7 @@ module.exports = class Database {
     setExp = async (jid, experience) => {
         await this.getUser(jid)
         experience = experience + Math.floor(Math.random() * 25)
-        await this.user.updateOne({ jid }, { $set: { experience } })
+        await this.user.updateOne({ jid }, { $inc: { experience } })
     }
 
     /**
