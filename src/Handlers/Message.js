@@ -49,8 +49,13 @@ module.exports = class MessageHandler {
                 M.sender.username
             )} in ${chalk.blueBright(title)}`
         )
-        const { ban } = await this.helper.DB.getUser(M.sender.jid)
+        const { ban, tag } = await this.helper.DB.getUser(M.sender.jid)
         if (ban) return void M.reply('You are banned from using commands')
+        if (!tag)
+            await this.helper.DB.user.updateOne(
+                { jid: M.sender.jid },
+                { $set: { tag: this.helper.utils.generateRandomUniqueTag(4) } }
+            )
         const cmd = args[0].toLowerCase().slice(prefix.length)
         const command = this.commands.get(cmd) || this.aliases.get(cmd)
         if (!command) return void M.reply('No such command, Baka!')
@@ -66,6 +71,7 @@ module.exports = class MessageHandler {
             return void M.reply('This command can only be used by the MODS')
         if (M.chat === 'dm' && !command.config.dm) return void M.reply('This command can only be used in groups')
         await this.helper.DB.setExp(M.sender.jid, command.config.exp || 10)
+        await this.handleUserStats(M)
         try {
             await command.execute(M, this.formatArgs(args))
         } catch (error) {
@@ -118,6 +124,20 @@ module.exports = class MessageHandler {
             context: args.join(' ').trim(),
             flags: args.filter((arg) => arg.startsWith('--'))
         }
+    }
+
+    /**
+     * @private
+     * @param {Message} M
+     * @returns {Promise<void>}
+     */
+
+    handleUserStats = async (M) => {
+        const data = await this.helper.DB.getUser(M.sender.jid)
+        const { requiredXpToLevelUp } = this.helper.utils.getStats(data.experience)
+        if (data.experience < requiredXpToLevelUp) return void null
+        data.level += 1
+        await this.helper.DB.user.updateOne({ jid: M.sender.jid }, { $set: { level: data.level } })
     }
 
     /**

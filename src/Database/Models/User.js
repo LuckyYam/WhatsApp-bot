@@ -17,6 +17,14 @@ const schema = new Schema({
         type: Boolean,
         required: true,
         default: false
+    },
+
+    tag: String,
+
+    level: {
+        type: Number,
+        required: true,
+        default: 1
     }
 })
 

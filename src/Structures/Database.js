@@ -1,4 +1,5 @@
 const { userSchema, groupSchema, contactSchema, sessionSchema, commandSchema } = require('../Database')
+const { Utils } = require('../lib')
 
 module.exports = class Database {
     constructor() {}
@@ -11,7 +12,8 @@ module.exports = class Database {
     getUser = async (jid) =>
         (await this.user.findOne({ jid })) ||
         (await new this.user({
-            jid
+            jid,
+            tag: this.utils.generateRandomUniqueTag(4)
         }).save())
 
     /**
@@ -80,10 +82,16 @@ module.exports = class Database {
     session = sessionSchema
 
     disabledCommands = commandSchema
+
+    /**
+     * @private
+     */
+
+    utils = new Utils()
 }
 
 /**
- * @typedef {{jid: string, experience: number, ban: boolean}} user
+ * @typedef {{jid: string, experience: number, ban: boolean, level: number, tag: string}} user
  */
 
 /**

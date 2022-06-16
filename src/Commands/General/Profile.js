@@ -7,7 +7,8 @@ module.exports = class command extends Command {
             description: "Displays user's profile",
             category: 'general',
             usage: 'profile || profile [tag/quote user]',
-            exp: 25
+            exp: 25,
+            aliases: ['p']
         })
     }
 
@@ -34,14 +35,15 @@ module.exports = class command extends Command {
         } catch (error) {
             bio = ''
         }
-        const { ban, experience } = await this.helper.DB.getUser(user)
+        const { ban, experience, level, tag } = await this.helper.DB.getUser(user)
         const admin = this.helper.utils.capitalize(`${await this.handler.isAdmin({ group: M.from, jid: user })}`)
+        const { rank } = this.helper.utils.getStats(level)
         return void M.reply(
             pfp,
             'image',
             undefined,
             undefined,
-            `🏮 *Username:* ${username}\n\n🎫 *Bio:* ${bio}\n\n🌟 *Experience:* ${experience}\n\n👑 *Admin:* ${admin}\n\n🟥 *Banned:* ${this.helper.utils.capitalize(
+            `🏮 *Username:* ${username}#${tag}\n\n🎫 *Bio:* ${bio}\n\n🌟 *Experience:* ${experience}\n\n🥇 *Rank:* ${rank}\n\n🍀 *Level:* ${level}\n\n👑 *Admin:* ${admin}\n\n🟥 *Banned:* ${this.helper.utils.capitalize(
                 `${ban || false}`
             )}`
         )
