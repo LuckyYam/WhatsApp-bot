@@ -8,7 +8,8 @@ module.exports = class command extends Command {
             description: "Displays user's rank",
             category: 'general',
             aliases: ['card'],
-            usage: 'rank [tag/quote users]'
+            usage: 'rank [tag/quote users]',
+            exp: 25
         })
     }
 

@@ -133,11 +133,10 @@ module.exports = class MessageHandler {
      */
 
     handleUserStats = async (M) => {
-        const data = await this.helper.DB.getUser(M.sender.jid)
-        const { requiredXpToLevelUp } = this.helper.utils.getStats(data.experience)
-        if (data.experience < requiredXpToLevelUp) return void null
-        data.level += 1
-        await this.helper.DB.user.updateOne({ jid: M.sender.jid }, { $set: { level: data.level } })
+        const { experience, level } = await this.helper.DB.getUser(M.sender.jid)
+        const { requiredXpToLevelUp } = this.helper.utils.getStats(level)
+        if (requiredXpToLevelUp > experience) return void null
+        await this.helper.DB.user.updateOne({ jid: M.sender.jid }, { $inc: { level: 1 } })
     }
 
     /**
