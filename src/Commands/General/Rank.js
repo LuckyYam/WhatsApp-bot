@@ -42,6 +42,7 @@ module.exports = class command extends Command {
             .setUsername(username, this.helper.utils.generateRandomHex())
             .setBackground('COLOR', this.helper.utils.generateRandomHex())
             .setRank(1, '', false)
+            .renderEmojis(true)
             .build()
         return void (await M.reply(
             card,

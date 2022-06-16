@@ -26,7 +26,7 @@
     "@adiwajshing/keyed-db": "^0.2.4",
     "@hapi/boom": "^10.0.0",
     "axios": "^0.27.2",
-    "canvacord": "^5.3.0",
+    "canvacord": "5.2.3",
     "chalk": "4.1.1",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
