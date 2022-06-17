@@ -19,22 +19,21 @@ module.exports = class command extends Command {
      */
 
     execute = async (M, { context }) => {
-     const texas = context.trim()
+        const texas = context.trim()
 
-  if (!context)
-        return void M.reply('Provide the code you want as carbon image, Baka!')
+        if (!context) return void M.reply('Provide the code you want as carbon image, Baka!')
 
- try {
-     const carbon = new Carbon.createCarbon()
-         .setCode(texas)
-         .setBackgroundColor(this.helper.utils.generateRandomHex())
-         .setExportSize(3)
-       
-     const buffer =  await Carbon.generateCarbon(carbon) 
-     return void (await M.reply(buffer, 'image'))
+        try {
+            const carbon = new Carbon.createCarbon()
+                .setCode(texas)
+                .setBackgroundColor(this.helper.utils.generateRandomHex())
+                .setExportSize(3)
 
- } catch(err) {
-    console.log(`Error Occurred`);
-    return void (await M.reply(`_Error can't generate image, Baka!_`));
-             }
-}}
+            const buffer = await Carbon.generateCarbon(carbon)
+            return void (await M.reply(buffer, 'image'))
+        } catch (err) {
+            console.log(`Error Occurred`)
+            return void (await M.reply(`_Error can't generate image, Baka!_`))
+        }
+    }
+}
