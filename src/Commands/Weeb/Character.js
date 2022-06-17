@@ -9,7 +9,8 @@ module.exports = class command extends Command {
             usage: 'character [query]',
             category: 'weeb',
             aliases: ['chara'],
-            exp: 20
+            exp: 20,
+            cooldown: 15
         })
     }
 

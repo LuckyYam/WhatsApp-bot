@@ -7,7 +7,8 @@ module.exports = class command extends Command {
             description: 'Sends random neko image',
             category: 'weeb',
             usage: 'neko',
-            exp: 20
+            exp: 20,
+            cooldown: 5
         })
     }
 

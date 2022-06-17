@@ -8,7 +8,8 @@ module.exports = class command extends Command {
             category: 'general',
             exp: 20,
             usage: 'help || help <command_name>',
-            aliases: ['h']
+            aliases: ['h'],
+            cooldown: 10
         })
     }
 
@@ -52,9 +53,9 @@ module.exports = class command extends Command {
                     !command.config.aliases
                         ? ''
                         : command.config.aliases.map((alias) => this.helper.utils.capitalize(alias)).join(', ')
-                }\n🔗 *Category:* ${this.helper.utils.capitalize(
-                    command.config.category
-                )}\n🎗 *Usage:* ${command.config.usage
+                }\n🔗 *Category:* ${this.helper.utils.capitalize(command.config.category)}\n⏰ *Cooldown:* ${
+                    command.config.cooldown ?? 3
+                }s\n🎗 *Usage:* ${command.config.usage
                     .split('||')
                     .map((usage) => `${this.helper.config.prefix}${usage.trim()}`)
                     .join(' | ')}\n🧧 *Description:* ${command.config.description}`

@@ -115,7 +115,7 @@ module.exports = class Message {
                     hasSupportedMediaMessage:
                         Type !== 'buttonsMessage'
                             ? supportedMediaType.includes(Type)
-                            : supportedMediaType.includes(Object.keys(quotedMessage.buttonsMessage)[0]),
+                            : supportedMediaType.includes(Object.keys(quotedMessage.buttonsMessage)[1]),
                     content: getQuotedContent(),
                     key: {
                         remoteJid: this.from,
@@ -194,7 +194,8 @@ module.exports = class Message {
         let msg = message[type]
         if (type === 'buttonsMessage' || type === 'viewOnceMessage') {
             if (type === 'viewOnceMessage') msg = msg.message
-            type = Object.keys(msg)[0]
+            if (type === 'viewOnceMessage') type = Object.keys(msg)[0]
+            else type = Object.keys(msg)[1]
             msg = msg[type]
         }
         const stream = await downloadContentFromMessage(msg, type.replace('Message', ''))

@@ -8,7 +8,8 @@ module.exports = class command extends Command {
             description: 'Searches a manga of the given query in MyAnimeList',
             category: 'weeb',
             exp: 10,
-            usage: 'manga [query]'
+            usage: 'manga [query]',
+            cooldown: 20
         })
     }
 

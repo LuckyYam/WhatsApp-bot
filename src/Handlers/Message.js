@@ -71,6 +71,18 @@ module.exports = class MessageHandler {
         if (command.config.category === 'dev' && !this.helper.config.mods.includes(M.sender.jid))
             return void M.reply('This command can only be used by the MODS')
         if (M.chat === 'dm' && !command.config.dm) return void M.reply('This command can only be used in groups')
+        const cooldownAmount = (command.config.cooldown ?? 3) * 1000
+        const time = cooldownAmount + Date.now()
+        if (this.cooldowns.has(`${M.sender.jid}${command.name}`)) {
+            const cd = this.cooldowns.get(`${M.sender.jid}${command.name}`)
+            const remainingTime = this.helper.utils.convertMs(cd - Date.now())
+            return void M.reply(
+                `You are on a cooldown. Wait *${remainingTime}* ${
+                    remainingTime > 1 ? 'seconds' : 'second'
+                } before using this command again`
+            )
+        } else this.cooldowns.set(`${M.sender.jid}${command.name}`, time)
+        setTimeout(() => this.cooldowns.delete(`${M.sender.jid}${command.name}`), cooldownAmount)
         await this.helper.DB.setExp(M.sender.jid, command.config.exp || 10)
         await this.handleUserStats(M)
         try {
@@ -151,6 +163,12 @@ module.exports = class MessageHandler {
      */
 
     aliases = new Map()
+
+    /**
+     * @type {Map<string, number>}
+     */
+
+    cooldowns = new Map()
 
     /**
      * @param {{group: string, jid: string}} options

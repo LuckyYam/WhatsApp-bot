@@ -8,7 +8,8 @@ module.exports = class command extends Command {
             description: 'Toggles a command state',
             usage: 'toggle --command=[command_name] --state=[disable/enable] | <reason_for_disabling_the_command>',
             exp: 10,
-            category: 'dev'
+            category: 'dev',
+            cooldown: 10
         })
     }
 

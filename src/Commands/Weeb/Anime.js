@@ -9,7 +9,8 @@ module.exports = class command extends Command {
             aliases: ['ani'],
             category: 'weeb',
             usage: 'anime [query]',
-            exp: 20
+            exp: 20,
+            cooldown: 20
         })
     }
 

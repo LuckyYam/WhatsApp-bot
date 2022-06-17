@@ -10,7 +10,8 @@ module.exports = class command extends Command {
             category: 'general',
             aliases: ['card'],
             usage: 'rank [tag/quote users]',
-            exp: 25
+            exp: 25,
+            cooldown: 15
         })
     }
 

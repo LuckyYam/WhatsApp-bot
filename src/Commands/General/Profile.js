@@ -9,7 +9,8 @@ module.exports = class command extends Command {
             category: 'general',
             usage: 'profile || profile [tag/quote user]',
             exp: 25,
-            aliases: ['p']
+            aliases: ['p'],
+            cooldown: 15
         })
     }
 

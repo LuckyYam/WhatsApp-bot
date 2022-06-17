@@ -9,7 +9,8 @@ module.exports = class command extends Command {
             aliases: ['bot'],
             category: 'general',
             exp: 100,
-            usage: 'info'
+            usage: 'info',
+            cooldown: 10
         })
     }
 
@@ -39,7 +40,6 @@ module.exports = class command extends Command {
             {
                 image,
                 caption: text,
-                jpegThumbnail: image?.toString('base64'),
                 contextInfo: {
                     externalAdReply: {
                         title: name,

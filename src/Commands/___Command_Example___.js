@@ -7,8 +7,9 @@ module.exports = class command extends Command {
             description: 'command_description',
             usage: 'example_of_using_the_command',
             category: 'category',
-            exp: 0,
-            dm: false
+            exp: 20,
+            dm: false,
+            cooldown: 10
         })
     }
 

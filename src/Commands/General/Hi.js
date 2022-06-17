@@ -8,7 +8,8 @@ module.exports = class command extends Command {
             category: 'general',
             usage: 'hi',
             aliases: ['hello'],
-            exp: 15
+            exp: 15,
+            cooldown: 5
         })
     }
 
