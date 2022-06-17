@@ -42,10 +42,10 @@ module.exports = class command extends Command {
     })
 
     const buffer = await sticker.toBuffer()
-    await M.reply(buffer, 'sticker')
+    await M.reply(buffer, 'sticker');
 
 } catch(err) {
-    console.log(`Emoji Error Occurred`) 
+    console.log(`Emoji Error Occurred`);
     return void (await M.reply(`*Invalid Input, Baka!*`));
              }
 }}
