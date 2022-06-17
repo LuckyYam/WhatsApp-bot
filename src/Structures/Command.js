@@ -44,7 +44,7 @@ module.exports = class Command {
 }
 
 /**
- * @typedef {{category: 'general' | 'dev' | 'weeb' | 'category', description: string, usage: string, aliases?: string[], exp?: number, dm?: boolean}} config
+ * @typedef {{category: 'general' | 'dev' | 'weeb' | 'utils' | 'category', description: string, usage: string, aliases?: string[], exp?: number, dm?: boolean}} config
  */
 
 /**
