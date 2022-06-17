@@ -50,10 +50,10 @@ module.exports = class command extends Command {
                         caption: text,
                         contextInfo: {
                             externalAdReply: {
-                                title: result.title,
+                                title: chara.name,
                                 mediaType: 1,
                                 thumbnail: image,
-                                sourceUrl: result.url
+                                sourceUrl: chara.url
                             }
                         }
                     },
