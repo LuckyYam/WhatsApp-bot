@@ -7,7 +7,8 @@ module.exports = class command extends Command {
             description: 'Sends a random waifu image',
             category: 'weeb',
             usage: 'waifu',
-            exp: 10
+            exp: 10,
+            cooldown: 5
         })
     }
 

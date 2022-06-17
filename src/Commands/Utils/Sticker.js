@@ -8,7 +8,8 @@ module.exports = class command extends Command {
             description: 'Converts image/video/gif to sticker',
             category: 'utils',
             usage: 'sticker [caption/quote message containing media] [options] | <pack> | <author>',
-            aliases: ['s']
+            aliases: ['s'],
+            cooldown: 10
         })
     }
 
