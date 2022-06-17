@@ -40,7 +40,6 @@ module.exports = class command extends Command {
             {
                 image,
                 caption: text,
-                jpegThumbnail: image?.toString('base64'),
                 contextInfo: {
                     externalAdReply: {
                         title: name,
