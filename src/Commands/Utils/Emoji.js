@@ -41,7 +41,7 @@ module.exports = class command extends Command {
     background: 'transparent'
     })
 
-    const buffer = await sticker.toBuffer()
+    const buffer = await sticker.toBuffer();
     await M.reply(buffer, 'sticker');
 
 } catch(err) {
