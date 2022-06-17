@@ -31,7 +31,7 @@ module.exports = class command extends Command {
          .setExportSize(3)
        
      const buffer =  await Carbon.generateCarbon(carbon) 
-     await M.reply(buffer, 'image')
+     return void (await M.reply(buffer, 'image'))
 
  } catch(err) {
     console.log(`Error Occurred`) 
