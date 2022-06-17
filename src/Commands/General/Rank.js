@@ -1,6 +1,7 @@
 const { Rank } = require('canvacord')
 const Message = require('../../Structures/Message')
 const Command = require('../../Structures/Command')
+const { Stats } = require('../../lib')
 
 module.exports = class command extends Command {
     constructor() {
@@ -31,7 +32,7 @@ module.exports = class command extends Command {
             pfp = this.helper.assets.get('404')
         }
         const { experience, level, tag } = await this.helper.DB.getUser(user)
-        const { requiredXpToLevelUp, rank } = this.helper.utils.getStats(level)
+        const { requiredXpToLevelUp, rank } = Stats.getStats(level)
         const card = await new Rank()
             .setAvatar(pfp)
             .setLevel(1, '', false)

@@ -4,6 +4,7 @@ const chalk = require('chalk')
 const Message = require('../Structures/Message')
 const Helper = require('../Structures/Helper')
 const Command = require('../Structures/Command')
+const { Stats } = require('../lib')
 
 module.exports = class MessageHandler {
     /**
@@ -134,7 +135,7 @@ module.exports = class MessageHandler {
 
     handleUserStats = async (M) => {
         const { experience, level } = await this.helper.DB.getUser(M.sender.jid)
-        const { requiredXpToLevelUp } = this.helper.utils.getStats(level)
+        const { requiredXpToLevelUp } = Stats.getStats(level)
         if (requiredXpToLevelUp > experience) return void null
         await this.helper.DB.user.updateOne({ jid: M.sender.jid }, { $inc: { level: 1 } })
     }

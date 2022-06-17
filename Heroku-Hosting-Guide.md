@@ -27,7 +27,3 @@
 7. Authenticate By going to http://your_app_name/qr/your_session>.<br>
 8. Open WhatsApp on your phone -> Click on the 3 Dots on the top Right -> Click on WhatsApp Web -> Click on "Link a Device" and scan the QR from the previous step.<br>
 9. Your heroku app can fall asleep so for keeping it awaken add your app to ([Kaffeine](https://kaffeine.herokuapp.com/))<br>. It pings your Heroku app every 30 minutes so it will never go to sleep.<br>
-
-## 🎗 Note
-
- If the QR code is not scanning try changing the session to a new one (different from the old ones) and scan it quick as you can.

@@ -25,6 +25,7 @@
     "@adiwajshing/baileys": "^4.1.0",
     "@adiwajshing/keyed-db": "^0.2.4",
     "@hapi/boom": "^10.0.0",
+    "@shineiichijo/marika": "^2.0.3",
     "axios": "^0.27.2",
     "canvacord": "5.2.3",
     "chalk": "4.1.1",

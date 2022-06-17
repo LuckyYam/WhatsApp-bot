@@ -1,3 +1,4 @@
 module.exports = {
-    Utils: require('./Utils')
+    Utils: require('./Utils'),
+    Stats: require('./Stats')
 }
