@@ -34,7 +34,7 @@ module.exports = class command extends Command {
      return void (await M.reply(buffer, 'image'))
 
  } catch(err) {
-    console.log(`Error Occurred`) 
+    console.log(`Error Occurred`);
     return void (await M.reply(`_Error can't generate image, Baka!_`));
              }
 }}
