@@ -1,5 +1,6 @@
 const Command = require('../../Structures/Command')
 const Message = require('../../Structures/Message')
+const { Stats } = require('../../lib')
 
 module.exports = class command extends Command {
     constructor() {
@@ -37,7 +38,7 @@ module.exports = class command extends Command {
         }
         const { ban, experience, level, tag } = await this.helper.DB.getUser(user)
         const admin = this.helper.utils.capitalize(`${await this.handler.isAdmin({ group: M.from, jid: user })}`)
-        const { rank } = this.helper.utils.getStats(level)
+        const { rank } = Stats.getStats(level)
         return void M.reply(
             pfp,
             'image',

@@ -48,10 +48,6 @@
  ```
  Running the above command will start the bot. To authenticate scan the QR which shows up in the terminal or the link which is logged when the QR event fires using the WA-Web Scanner on your WhatsApp. Now you're on your own. Good Luck!
 
- ## 🎗 Note
-
- If the QR code is not scanning try changing the session to a new one (different from the old ones) and scan it quick as you can.
-
 # Don't want to do the hassle of setting up on your own PC?
 
  [Set it up on Heroku](https://github.com/LuckyYam/WhatsApp-bot/blob/master/Heroku-Hosting-Guide.md)

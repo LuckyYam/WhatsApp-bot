@@ -40,7 +40,10 @@ module.exports = class Message {
         /**
          * @type {boolean}
          */
-        this.hasSupportedMediaMessage = supportedMediaType.includes(this.type)
+        this.hasSupportedMediaMessage =
+            this.type !== 'buttonsMessage'
+                ? supportedMediaType.includes(this.type)
+                : supportedMediaType.includes(Object.keys(M.message?.buttonsMessage)[0])
         const getContent = () => {
             if (M.message?.buttonsResponseMessage) return M.message?.buttonsResponseMessage?.selectedDisplayText || ''
             if (M.message?.listResponseMessage)
@@ -109,9 +112,19 @@ module.exports = class Message {
                     },
                     message: quotedMessage,
                     type: Type,
-                    hasSupportedMediaMessage: supportedMediaType.includes(Type),
+                    hasSupportedMediaMessage:
+                        Type !== 'buttonsMessage'
+                            ? supportedMediaType.includes(Type)
+                            : supportedMediaType.includes(Object.keys(quotedMessage.buttonsMessage)[0]),
                     content: getQuotedContent(),
-                    id: stanzaId
+                    key: {
+                        remoteJid: this.from,
+                        fromMe:
+                            `${participant.split('@')[0].split(':')[0]}@s.whatsapp.net}` ===
+                            `${this.client.user.id.split('@')[0].split(':')[0]}@s.whatsapp.net}`,
+                        id: stanzaId,
+                        participant
+                    }
                 }
             }
         }
@@ -176,8 +189,14 @@ module.exports = class Message {
      */
 
     downloadMediaMessage = async (message) => {
-        const type = Object.keys(message)[0]
-        const msg = message[type]
+        /**@type {keyof proto.IMessage} */
+        let type = Object.keys(message)[0]
+        let msg = message[type]
+        if (type === 'buttonsMessage' || type === 'viewOnceMessage') {
+            if (type === 'viewOnceMessage') msg = msg.message
+            type = Object.keys(msg)[0]
+            msg = msg[type]
+        }
         const stream = await downloadContentFromMessage(msg, type.replace('Message', ''))
         let buffer = Buffer.from([])
         for await (const chunk of stream) {
