@@ -9,7 +9,8 @@ module.exports = class command extends Command {
             category: 'utils',
             usage: 'emoji 😗',
             aliases: ['emoj', 'ejs'],
-            exp: 20
+            exp: 20,
+            cooldown: 10
         })
     }
 
