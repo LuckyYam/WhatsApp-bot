@@ -25,7 +25,7 @@ module.exports = class command extends Command {
         if (!code) return void M.reply('Provide the code you want as a carbon image, Baka!')
         try {
             const carbon = new Carbon.createCarbon()
-                .setCode(code)
+                .setCode(code.replace(/\```/g, ''))
                 .setBackgroundColor(this.helper.utils.generateRandomHex())
                 .setExportSize(3)
             const buffer = await Carbon.generateCarbon(carbon)

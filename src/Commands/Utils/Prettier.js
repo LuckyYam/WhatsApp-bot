@@ -13,7 +13,8 @@ module.exports = class command extends Command {
             exp: 35,
             usage: `prettier [provide the code/quote the message containing the code] --lang=[${supportedLang.join(
                 '/'
-            )}] [options]`
+            )}] [options]`,
+            aliases: ['format']
         })
     }
 
