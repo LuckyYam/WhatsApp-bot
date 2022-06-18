@@ -11,7 +11,9 @@ module.exports = class command extends Command {
             category: 'utils',
             cooldown: 10,
             exp: 35,
-            usage: `prettier --lang=[${supportedLang.join('/')}] [options]`
+            usage: `prettier [provide the code/quote the message containing the code] --lang=[${supportedLang.join(
+                '/'
+            )}] [options]`
         })
     }
 
