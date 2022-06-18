@@ -1229,7 +1229,7 @@ node-cache@^5.1.2:
   dependencies:
     clone "2.x"
 
-node-fetch@2.6.7, node-fetch@^2.6.7:
+node-fetch@2.6.7, node-fetch@^2.6.1, node-fetch@^2.6.7:
   version "2.6.7"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.7.tgz#24de9fba827e3b4ae44dc8b20256a379160052ad"
   integrity sha512-ZjMPFEfVx5j+y2yF35Kzx5sF7kDzxuDj6ziH4FFbOp87zKDZNx8yExJIb05OGF4Nlt9IHFIMBkRl41VdvcNdbQ==
@@ -1909,6 +1909,13 @@ universalify@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/universalify/-/universalify-2.0.0.tgz#75a4984efedc4b08975c5aeb73f530d02df25717"
   integrity sha512-hAZsKq7Yy11Zu1DE0OzWjw7nnLZmJZYTDZZyEFHZdUhV8FkH5MCfoU1XMaxXovpyW5nq5scPqq0ZDP9Zyl04oQ==
+
+unofficial-carbon-now@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/unofficial-carbon-now/-/unofficial-carbon-now-1.0.6.tgz#b8757bddc4a3997d602e754c56bf7a56e62b0c25"
+  integrity sha512-6u2k3TOkrTckk0uxXfMFGuNQPWu2tPFUjHlvhKVmQhSEdQJcy8Dd2HeqCuKWx+pd9LXjbmZqkF6A/if9jS9aIQ==
+  dependencies:
+    node-fetch "^2.6.1"
 
 unpipe@1.0.0, unpipe@~1.0.0:
   version "1.0.0"
