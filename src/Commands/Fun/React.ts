@@ -17,7 +17,12 @@ export default class extends BaseCommand {
         const command = M.content.split(' ')[0].toLowerCase().slice(this.helper.config.prefix.length).trim()
         let flag = true
         if (command === 'r' || command === 'react') flag = false
-        if (!flag && !context) return void M.reply(`*Available Reactions:*\n${reactions.map((reaction) => this.helper.utils.capitalize(reaction)).join('\n- ')}`)
+        if (!flag && !context)
+            return void M.reply(
+                `💫 *Available Reactions:*\n\n- ${reactions
+                    .map((reaction) => this.helper.utils.capitalize(reaction))
+                    .join('\n- ')}`
+            )
         const reaction = (flag ? command : context.split(' ')[0].trim().toLowerCase()) as reaction
         if (!flag && !reactions.includes(reaction))
             return void M.reply(
