@@ -2,7 +2,8 @@ import { Utils } from '.'
 
 enum baseUrls {
     'waifu.pics' = 'https://api.waifu.pics/type/',
-    'nekos.life' = 'https://nekos.life/api/v2/img/'
+    'nekos.life' = 'https://nekos.life/api/v2/img/',
+    'nekos.best' = 'https://nekos.best/api/v2/'
 }
 
 export enum Reactions {
@@ -10,7 +11,7 @@ export enum Reactions {
     cuddle = baseUrls['nekos.life'],
     cry = baseUrls['waifu.pics'],
     hug = baseUrls['nekos.life'],
-    kiss = baseUrls['nekos.life'],
+    kiss = baseUrls['waifu.pics'],
     lick = baseUrls['waifu.pics'],
     pat = baseUrls['nekos.life'],
     smug = baseUrls['nekos.life'],
@@ -32,14 +33,21 @@ export enum Reactions {
     poke = baseUrls['waifu.pics'],
     dance = baseUrls['waifu.pics'],
     cringe = baseUrls['waifu.pics'],
-    tickle = baseUrls['nekos.life']
+    tickle = baseUrls['nekos.life'],
+    baka = baseUrls['nekos.best'],
+    bored = baseUrls['nekos.best'],
+    laugh = baseUrls['nekos.best'],
+    punch = baseUrls['nekos.best'],
+    pout = baseUrls['nekos.best'],
+    stare = baseUrls['nekos.best'],
+    thumbsup = baseUrls['nekos.best']
 }
 
 export type reaction = keyof typeof Reactions
 
 export class Reaction {
     public getReaction = async (reaction: reaction, single: boolean = true) => {
-        const { url } = await this.utils.fetch<{ url: string }>(`${Reactions[reaction]}${reaction}`)
+        const { url } = await this.fetch(`${Reactions[reaction]}${reaction}`)
         const words = this.getSuitableWords(reaction, single)
         return {
             url,
@@ -103,7 +111,28 @@ export class Reaction {
                 return 'Winked at'
             case 'yeet':
                 return 'Yeeted at'
+            case 'baka':
+                return 'Yelled BAKA at'
+            case 'bored':
+                return 'is Bored of'
+            case 'laugh':
+                return 'Laughed at'
+            case 'punch':
+                return 'Punched'
+            case 'pout':
+                return 'Pouted'
+            case 'stare':
+                return 'Stared at'
+            case 'thumbsup':
+                return 'Thumbs-upped at'
         }
+    }
+
+    private fetch = async (url: string): Promise<{ url: string }> => {
+        const data = await this.utils.fetch<{ url: string } | { results: { anime_name: string; url: string }[] }>(url)
+        const res = data as { results: { anime_name: string; url: string }[] }
+        if (res.results) return res.results[0]
+        return data as { url: string }
     }
 
     private utils = new Utils()
