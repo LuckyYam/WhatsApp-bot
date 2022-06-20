@@ -25,7 +25,7 @@
     "url": "https://github.com/LuckyYam/WhatsApp-bot.git"
   },
   "dependencies": {
-    "@adiwajshing/baileys": "^4.1.0",
+    "@adiwajshing/baileys": "^4.2.0",
     "@adiwajshing/keyed-db": "^0.2.4",
     "@hapi/boom": "^10.0.0",
     "@shineiichijo/marika": "^2.0.3",
