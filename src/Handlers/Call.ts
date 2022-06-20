@@ -7,7 +7,7 @@ export class CallHandler {
 
     public handleCall = async (call: ICall): Promise<void> => {
         if (call.content[0].tag !== 'offer') return void null
-        const caller = call.content[1].attrs['call-creator']
+        const caller = call.content[0].attrs['call-creator']
         const { username } = this.helper.contact.getContact(caller)
         this.helper.log(`${chalk.cyanBright('Call')} from ${chalk.blueBright(username)}`)
         await this.client.sendMessage(caller, { text: 'You are now banned' })
