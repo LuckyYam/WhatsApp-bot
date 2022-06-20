@@ -1,0 +1,175 @@
+import { proto, MessageType, MediaType, AnyMessageContent, downloadContentFromMessage } from '@adiwajshing/baileys'
+import { Contact, Helper } from '.'
+import { Utils } from '../lib'
+import { client, IContact, DownloadableMessage } from '../Types'
+
+export class Message {
+    constructor(private M: proto.IWebMessageInfo, private client: client) {
+        this.message = this.M
+        this.from = M.key.remoteJid || ''
+        this.chat = this.from.endsWith('@s.whatsapp.net') ? 'dm' : 'group'
+        this.sender = this.contact.getContact(
+            this.chat === 'dm' ? this.correctJid(this.from) : this.correctJid(M.key.participant || '')
+        )
+        this.type = (Object.keys(M.message || {})[0] as MessageType) || 'conversation'
+        if (this.M.pushName) this.sender.username = this.M.pushName
+        const supportedMediaType = ['videoMessage', 'imageMessage']
+        this.hasSupportedMediaMessage =
+            this.type === 'buttonsMessage'
+                ? supportedMediaType.includes(Object.keys(M.message?.buttonsMessage || {})[0])
+                : supportedMediaType.includes(this.type)
+        const getContent = (): string => {
+            if (M.message?.buttonsResponseMessage) return M.message?.buttonsResponseMessage?.selectedDisplayText || ''
+            if (M.message?.listResponseMessage)
+                return M.message?.listResponseMessage?.singleSelectReply?.selectedRowId || ''
+            return M.message?.conversation
+                ? M.message.conversation
+                : this.hasSupportedMediaMessage
+                ? supportedMediaType
+                      .map((type) => M.message?.[type as 'imageMessage']?.caption)
+                      .filter((caption) => caption)[0] || ''
+                : M.message?.extendedTextMessage?.text
+                ? M.message?.extendedTextMessage.text
+                : ''
+        }
+        this.content = getContent()
+        const mentions = (M.message?.[this.type as 'extendedTextMessage']?.contextInfo?.mentionedJid || []).filter(
+            (x) => x !== null && x !== undefined
+        )
+        for (const mentioned of mentions) this.mentioned.push(mentioned)
+        let text = this.content
+        for (const mentioned of this.mentioned) text = text.replace(mentioned.split('@')[0], '')
+        this.numbers = this.utils.extractNumbers(text)
+        if (M.message?.[this.type as 'extendedTextMessage']?.contextInfo?.quotedMessage) {
+            const { quotedMessage, participant, stanzaId } =
+                M.message?.[this.type as 'extendedTextMessage']?.contextInfo || {}
+            if (quotedMessage && participant && stanzaId) {
+                const Type = Object.keys(quotedMessage)[0] as MessageType
+                const getQuotedContent = (): string => {
+                    if (quotedMessage?.buttonsResponseMessage)
+                        return quotedMessage?.buttonsResponseMessage?.selectedDisplayText || ''
+                    if (quotedMessage?.listResponseMessage)
+                        return quotedMessage?.listResponseMessage?.singleSelectReply?.selectedRowId || ''
+                    return quotedMessage?.conversation
+                        ? quotedMessage.conversation
+                        : supportedMediaType.includes(Type)
+                        ? supportedMediaType
+                              .map((type) => quotedMessage?.[type as 'imageMessage']?.caption)
+                              .filter((caption) => caption)[0] || ''
+                        : quotedMessage?.extendedTextMessage?.text
+                        ? quotedMessage?.extendedTextMessage.text
+                        : ''
+                }
+                this.quoted = {
+                    sender: this.contact.getContact(this.correctJid(participant)) || {
+                        username: 'User',
+                        jid: this.correctJid(participant)
+                    },
+                    content: getQuotedContent(),
+                    message: quotedMessage,
+                    type: Type,
+                    hasSupportedMediaMessage:
+                        Type !== 'buttonsMessage'
+                            ? supportedMediaType.includes(Type)
+                            : supportedMediaType.includes(Object.keys(quotedMessage?.buttonsMessage || {})[1]),
+                    key: {
+                        remoteJid: this.from,
+                        fromMe: this.correctJid(participant) === this.correctJid(this.client.user.id),
+                        id: stanzaId,
+                        participant
+                    }
+                }
+            }
+        }
+    }
+
+    public reply = async (
+        content: string | Buffer,
+        type: 'text' | 'image' | 'video' | 'audio' | 'sticker' | 'document' = 'text',
+        gif?: boolean,
+        mimetype?: string,
+        caption?: string,
+        mentions?: string[],
+        externalAdReply?: proto.IContextInfo['externalAdReply'],
+        thumbnail?: Buffer,
+        fileName?: string,
+        options: { sections?: proto.ISection[]; buttonText?: string; title?: string } = {}
+    ): Promise<proto.WebMessageInfo> => {
+        if (type === 'text' && Buffer.isBuffer(content)) throw new Error('Cannot send Buffer as a text message')
+        return this.client.sendMessage(
+            this.from,
+            {
+                [type]: content,
+                gifPlayback: gif,
+                caption,
+                mimetype,
+                mentions,
+                fileName,
+                jpegThumbnail: thumbnail ? thumbnail.toString('base64') : undefined,
+                contextInfo: externalAdReply
+                    ? {
+                          externalAdReply
+                      }
+                    : undefined,
+                footer: options.sections?.length ? `🤍 ${this.helper.config.name} 🖤` : undefined,
+                sections: options.sections,
+                title: options.title,
+                buttonText: options.buttonText
+            } as unknown as AnyMessageContent,
+            {
+                quoted: this.M
+            }
+        )
+    }
+
+    public react = async (emoji: string, key: proto.IMessageKey = this.M.key): Promise<proto.WebMessageInfo> =>
+        await this.client.sendMessage(this.from, {
+            react: {
+                text: emoji,
+                key
+            }
+        })
+
+    public downloadMediaMessage = async (message: proto.IMessage): Promise<Buffer> => {
+        let type = Object.keys(message)[0] as MessageType
+        let msg = message[type as keyof typeof message]
+        if (type === 'buttonsMessage' || type === 'viewOnceMessage') {
+            if (type === 'viewOnceMessage') {
+                msg = message.viewOnceMessage?.message
+                type = Object.keys(msg || {})[0] as MessageType
+            } else type = Object.keys(msg || {})[1] as MessageType
+            msg = (msg as any)[type]
+        }
+        const stream = await downloadContentFromMessage(
+            msg as DownloadableMessage,
+            type.replace('Message', '') as MediaType
+        )
+        let buffer = Buffer.from([])
+        for await (const chunk of stream) {
+            buffer = Buffer.concat([buffer, chunk])
+        }
+        return buffer
+    }
+
+    private utils = new Utils()
+    private contact = new Contact()
+    public from: string
+    public sender: IContact
+    public content: string
+    public numbers: number[]
+    public hasSupportedMediaMessage: boolean
+    public type: MessageType
+    public message: proto.IWebMessageInfo
+    public chat: 'dm' | 'group'
+    public mentioned: string[] = []
+    public quoted?: {
+        content: string
+        sender: IContact
+        type: MessageType
+        message: proto.IMessage
+        hasSupportedMediaMessage: boolean
+        key: proto.IMessageKey
+    }
+    public helper!: Helper
+    public correctJid = (jid: string): string => `${jid.split('@')[0].split(':')[0]}@s.whatsapp.net`
+}
