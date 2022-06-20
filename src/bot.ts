@@ -45,11 +45,7 @@ const start = async (): Promise<client> => {
 
     loadCommands()
 
-    client.ev.on('messages.upsert', async ({ messages }) => {
-        const M = new Message(messages[0], client)
-        M.helper = helper
-        await handleMessage(M)
-    })
+    helper.on('new-message', async (M: Message) => await handleMessage(M))
 
     client.ws.on('CB:call', async (call: ICall) => await handleCall(call))
 
@@ -84,6 +80,13 @@ const start = async (): Promise<client> => {
             helper.state = 'connected'
             helper.log('Connected to WhatsApp')
         }
+    })
+
+    client.ev.on('messages.upsert', async ({ messages }) => {
+        const M = new Message(messages[0], client)
+        M.helper = helper
+        if (M.type === 'protocolMessage' || M.type === 'senderKeyDistributionMessage') return
+        helper.emit('new-message', M)
     })
 
     client.ev.on('creds.update', saveState)

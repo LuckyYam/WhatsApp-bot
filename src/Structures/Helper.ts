@@ -1,14 +1,17 @@
 import chalk from 'chalk'
+import EventEmitter from 'events'
 import { Utils } from '../lib'
 import { Database, Contact } from '.'
 import { IConfig } from '../Types'
 
-export class Helper {
+export class Helper extends EventEmitter {
     /**
      * Constructs the configuration of your bot
      * @param {IConfig} config Configuration of your bot
      */
-    constructor(public config: IConfig) {}
+    constructor(public config: IConfig) {
+        super()
+    }
 
     public utils = new Utils()
 

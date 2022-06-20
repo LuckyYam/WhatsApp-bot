@@ -9,7 +9,6 @@ export class MessageHandler {
     constructor(private client: client, private helper: Helper) {}
 
     public handleMessage = async (M: Message): Promise<void> => {
-        if (M.type === 'protocolMessage' || M.type === 'senderKeyDistributionMessage') return void null
         const { prefix } = this.helper.config
         const args = M.content.split(' ')
         let title = 'DM'
