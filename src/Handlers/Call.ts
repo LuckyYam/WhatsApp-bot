@@ -6,7 +6,7 @@ export class CallHandler {
     constructor(private client: client, private helper: Helper) {}
 
     public handleCall = async (call: ICall): Promise<void> => {
-        if (call.content[1].tag !== 'offer') return void null
+        if (call.content[0].tag !== 'offer') return void null
         const caller = call.content[1].attrs['call-creator']
         const { username } = this.helper.contact.getContact(caller)
         this.helper.log(`${chalk.cyanBright('Call')} from ${chalk.blueBright(username)}`)
