@@ -37,7 +37,7 @@
 ## 💈 Preview
 
  - Fully Modular Design
- - Written in [JavaScript](https://www.javascript.com/)
+ - Written in [TypeScript](https://www.typescriptlang.org/)
  - Built with [Baileys](https://github.com/adiwajshing/baileys) (A Lightweight full-featured WhatsApp Library)
  - Powered by [ExpressJs](https://expressjs.com/)
  - Database handled via [MongoDB](https://www.mongodb.com/)
