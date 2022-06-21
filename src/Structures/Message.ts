@@ -81,6 +81,7 @@ export class Message {
                 }
             }
         }
+        this.emojis = this.utils.extractEmojis(this.content)
     }
 
     public reply = async (
@@ -171,5 +172,6 @@ export class Message {
         key: proto.IMessageKey
     }
     public helper!: Helper
+    public emojis: string[]
     public correctJid = (jid: string): string => `${jid.split('@')[0].split(':')[0]}@s.whatsapp.net`
 }

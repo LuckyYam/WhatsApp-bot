@@ -4,24 +4,27 @@ import { Reaction, Reactions, reaction } from '../../lib'
 
 const reactions = Object.keys(Reactions)
 
-@Command('react', {
-    description: 'React!',
+@Command('reaction', {
+    description: 'React via anime gifs with the tagged or quoted user',
     category: 'fun',
     cooldown: 10,
     exp: 20,
-    usage: 'react [reaction] [tag/quote user] || [reaction] [tag/quote user]',
+    usage: 'reaction (reaction) [tag/quote user] || (reaction) [tag/quote user]',
     aliases: ['r', ...reactions]
 })
 export default class extends BaseCommand {
     public override execute = async (M: Message, { context }: IArgs): Promise<void> => {
         const command = M.content.split(' ')[0].toLowerCase().slice(this.helper.config.prefix.length).trim()
         let flag = true
-        if (command === 'r' || command === 'react') flag = false
+        if (command === 'r' || command === 'reaction') flag = false
         if (!flag && !context)
             return void M.reply(
                 `💫 *Available Reactions:*\n\n- ${reactions
+                    .sort((x, y) => (x < y ? -1 : x > y ? 1 : 0))
                     .map((reaction) => this.helper.utils.capitalize(reaction))
-                    .join('\n- ')}`
+                    .join('\n- ')}\n\n🔗 *Usage:* ${this.helper.config.prefix}reaction (reaction) [tag/quote user] | ${
+                    this.helper.config.prefix
+                }(reaction) [tag/quote user]\nExample: ${this.helper.config.prefix}pat`
             )
         const reaction = (flag ? command : context.split(' ')[0].trim().toLowerCase()) as reaction
         if (!flag && !reactions.includes(reaction))
