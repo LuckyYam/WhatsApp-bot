@@ -1,11 +1,11 @@
 {
   "name": "WhatsApp-bot",
-  "description": "A WhatsApp Bot written in JavaScript using Baileys.",
+  "description": "A WhatsApp Bot written in TypeScript using Baileys.",
   "keywords": [
     "bot",
     "whatsapp",
     "whatsapp-bot",
-    "whatsapp-sticker-bot"
+    "whatsapp-anime-bot"
   ],
   "logo": "https://raw.githubusercontent.com/LuckyYam/WhatsApp-bot/master/assets/images/whatsapp-bot.png",
   "website": "https://github.com/LuckyYam/WhatsApp-bot#readme",
@@ -32,9 +32,6 @@
   "buildpacks": [
     {
       "url": "heroku/nodejs"
-    },
-    {
-      "url": "https://github.com/PrajjwalDatir/heroku-buildpack-imagemagick.git"
     },
     {
       "url": "https://github.com/clhuang/heroku-buildpack-webp-binaries.git"
