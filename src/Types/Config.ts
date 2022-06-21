@@ -3,10 +3,10 @@ export interface IConfig {
     name: string
     /**prefix of your bot */
     prefix: string
-    /**session of your bot */
+    /**session of the bot */
     session: string
     /**number of the users who's the bot admins of the bot */
     mods: string[]
-    /**port where the server is started */
+    /**port number where the server will be started */
     PORT: number
 }

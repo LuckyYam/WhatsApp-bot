@@ -32,7 +32,7 @@ export default class extends BaseCommand {
                     ', '
                 )}\n💛 *Source:* ${source}`
                 if (chara.about !== null) text += `\n\n❤ *Description:* ${chara.about}`
-                const image = await this.helper.utils.getBuffer(chara.images.jpg.image_url)
+                const image = await this.client.utils.getBuffer(chara.images.jpg.image_url)
                 return void (await M.reply(image, 'image', undefined, undefined, text, undefined, {
                     title: chara.name,
                     mediaType: 1,

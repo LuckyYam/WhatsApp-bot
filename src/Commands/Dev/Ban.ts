@@ -16,13 +16,13 @@ export default class extends BaseCommand {
         flags = flags.filter((flag) => flag.startsWith('--action='))
         if (flags.length < 1)
             return void M.reply(
-                `Provide the action of the ban. Example: *${this.helper.config.prefix}ban --action=ban*`
+                `Provide the action of the ban. Example: *${this.client.config.prefix}ban --action=ban*`
             )
         const actions = ['ban', 'unban']
         const action = flags[0].split('=')[1]
         if (action === '')
             return void M.reply(
-                `Provide the action of the ban. Example: *${this.helper.config.prefix}ban --action=ban*`
+                `Provide the action of the ban. Example: *${this.client.config.prefix}ban --action=ban*`
             )
         if (!actions.includes(action.toLowerCase())) return void M.reply('Invalid action')
         let text = `🚦 *State: ${action.toLowerCase() === 'ban' ? 'BANNED' : 'UNBANNED'}*\n⚗ *Users:*\n`
@@ -30,14 +30,14 @@ export default class extends BaseCommand {
         let resultText = ''
         let skippedFlag = false
         for (const user of users) {
-            const info = await this.helper.DB.getUser(user)
+            const info = await this.client.DB.getUser(user)
             if (
-                ((this.helper.config.mods.includes(user) || info.banned) && action.toLowerCase() === 'ban') ||
+                ((this.client.config.mods.includes(user) || info.banned) && action.toLowerCase() === 'ban') ||
                 (!info.banned && action.toLowerCase() === 'unban')
             ) {
                 skippedFlag = true
                 Text += `*@${user.split('@')[0]}* (Skipped as this user is ${
-                    this.helper.config.mods.includes(user)
+                    this.client.config.mods.includes(user)
                         ? 'a moderator'
                         : action.toLowerCase() === 'ban'
                         ? 'already banned'
@@ -46,7 +46,7 @@ export default class extends BaseCommand {
                 continue
             }
             text += `\n*@${user.split('@')[0]}*`
-            await this.helper.DB.updateBanStatus(user, action.toLowerCase() as 'ban' | 'unban')
+            await this.client.DB.updateBanStatus(user, action.toLowerCase() as 'ban' | 'unban')
         }
         if (skippedFlag) resultText += `${Text}\n`
         resultText += text

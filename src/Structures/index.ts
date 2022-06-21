@@ -1,5 +1,5 @@
 export * from './Database'
-export * from './Helper'
+export * from './Client'
 export * from './Contact'
 export * from './Auth'
 export * from './Server'

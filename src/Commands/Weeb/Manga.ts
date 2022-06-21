@@ -19,7 +19,7 @@ export default class extends BaseCommand {
                 const result = data[0]
                 let text = `🎀 *Title:* ${result.title}\n🎋 *Format:* ${
                     result.type
-                }\n📈 *Status:* ${this.helper.utils.capitalize(
+                }\n📈 *Status:* ${this.client.utils.capitalize(
                     result.status.toLowerCase().replace(/\_/g, ' ')
                 )}\n🍥 *Total chapters:* ${result.chapters}\n🎈 *Total volumes:* ${
                     result.volumes
@@ -30,7 +30,7 @@ export default class extends BaseCommand {
                 }\n🏅 *Rank:* ${result.rank}\n\n`
                 if (result.background !== null) text += `🎆 *Background:* ${result.background}*\n\n`
                 text += `❄ *Description:* ${result.synopsis}`
-                const image = await this.helper.utils.getBuffer(result.images.jpg.large_image_url)
+                const image = await this.client.utils.getBuffer(result.images.jpg.large_image_url)
                 return void (await M.reply(image, 'image', undefined, undefined, text, undefined, {
                     title: result.title,
                     mediaType: 1,

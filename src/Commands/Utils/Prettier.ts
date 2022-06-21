@@ -17,7 +17,7 @@ export default class extends BaseCommand {
         flags.forEach((flag) => (context = context.replace(flag, '')))
         if (!context && (!M.quoted || M.quoted.content === ''))
             return void M.reply(
-                `Provide or quote a message containing the code that you want to run prettier along with the language and options. Example: *${this.helper.config.prefix}prettier --lang=ts --no-semi --single-quote *[quotes a message containing the code]**`
+                `Provide or quote a message containing the code that you want to run prettier along with the language and options. Example: *${this.client.config.prefix}prettier --lang=ts --no-semi --single-quote *[quotes a message containing the code]**`
             )
         const langFlag = flags.filter((flag) => flag.startsWith('--lang=') || flag.startsWith('--language='))[0]
         let lang = 'js'

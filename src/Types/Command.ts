@@ -1,14 +1,12 @@
-import { client, IArgs } from '.'
-import { Helper, Message } from '../Structures'
+import { IArgs } from '.'
+import { Client, Message } from '../Structures'
 import { MessageHandler } from '../Handlers'
 
 export interface ICommand {
     /**Name of the command */
     name: string
     /**The client of WhatsApp */
-    client: client
-    /**Helper */
-    helper: Helper
+    client: Client
     /**Handler of message */
     handler: MessageHandler
     /**Configuration of the command */

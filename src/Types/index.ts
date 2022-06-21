@@ -9,13 +9,4 @@ export interface IContact {
     username: string
 }
 
-export interface ICall {
-    content: {
-        attrs: {
-            'call-creator': string
-        }
-        tag: string
-    }[]
-}
-
 export type client = ReturnType<typeof Baileys>
