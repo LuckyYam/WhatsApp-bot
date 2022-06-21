@@ -3,6 +3,7 @@ import { tmpdir } from 'os'
 import { promisify } from 'util'
 import { exec } from 'child_process'
 import { readFile, unlink, writeFile } from 'fs-extra'
+import regex from 'emoji-regex'
 
 export class Utils {
     public generateRandomHex = (): string => `#${(~~(Math.random() * (1 << 24))).toString(16)}`
@@ -22,6 +23,8 @@ export class Utils {
         if (search !== null) return search.map((string) => parseInt(string))
         return []
     }
+
+    public extractEmojis = (content: string): string[] => content.match(regex()) || []
 
     public formatSeconds = (seconds: number): string => new Date(seconds * 1000).toISOString().substr(11, 8)
 
