@@ -4,6 +4,7 @@ import { promisify } from 'util'
 import { exec } from 'child_process'
 import { readFile, unlink, writeFile } from 'fs-extra'
 import regex from 'emoji-regex'
+import getUrls from 'get-urls'
 
 export class Utils {
     public generateRandomHex = (): string => `#${(~~(Math.random() * (1 << 24))).toString(16)}`
@@ -23,6 +24,8 @@ export class Utils {
         if (search !== null) return search.map((string) => parseInt(string))
         return []
     }
+
+    public extractUrls = (content: string): string[] => Array.from(getUrls(content))
 
     public extractEmojis = (content: string): string[] => content.match(regex()) || []
 

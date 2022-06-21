@@ -16,24 +16,24 @@ export default class extends BaseCommand {
         if (M.quoted && !users.includes(M.quoted.sender.jid)) users.push(M.quoted.sender.jid)
         while (users.length < 1) users.push(M.sender.jid)
         const user = users[0]
-        const username = user === M.sender.jid ? M.sender.username : this.helper.contact.getContact(user).username
+        const username = user === M.sender.jid ? M.sender.username : this.client.contact.getContact(user).username
         let pfp!: Buffer
         try {
-            pfp = await this.helper.utils.getBuffer(await this.client.profilePictureUrl(user, 'image'))
+            pfp = await this.client.utils.getBuffer(await this.client.profilePictureUrl(user, 'image'))
         } catch {
-            pfp = this.helper.assets.get('404') as Buffer
+            pfp = this.client.assets.get('404') as Buffer
         }
-        const { experience, level, tag } = await this.helper.DB.getUser(user)
+        const { experience, level, tag } = await this.client.DB.getUser(user)
         const { requiredXpToLevelUp, rank } = getStats(level)
         const card = await new Rank()
             .setAvatar(pfp)
             .setLevel(1, '', false)
             .setCurrentXP(experience)
             .setRequiredXP(requiredXpToLevelUp)
-            .setProgressBar(this.helper.utils.generateRandomHex())
-            .setDiscriminator(tag, this.helper.utils.generateRandomHex())
-            .setUsername(username, this.helper.utils.generateRandomHex())
-            .setBackground('COLOR', this.helper.utils.generateRandomHex())
+            .setProgressBar(this.client.utils.generateRandomHex())
+            .setDiscriminator(tag, this.client.utils.generateRandomHex())
+            .setUsername(username, this.client.utils.generateRandomHex())
+            .setBackground('COLOR', this.client.utils.generateRandomHex())
             .setRank(1, '', false)
             .renderEmojis(true)
             .build({ fontX: 'arial', fontY: 'arial' })

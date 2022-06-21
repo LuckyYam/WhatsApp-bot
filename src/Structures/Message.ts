@@ -1,16 +1,17 @@
 import { proto, MessageType, MediaType, AnyMessageContent, downloadContentFromMessage } from '@adiwajshing/baileys'
-import { Contact, Helper } from '.'
+import { Contact, Client } from '.'
 import { Utils } from '../lib'
-import { client, IContact, DownloadableMessage } from '../Types'
+import { IContact, DownloadableMessage } from '../Types'
 
 export class Message {
-    constructor(private M: proto.IWebMessageInfo, private client: client) {
+    constructor(private M: proto.IWebMessageInfo, private client: Client) {
         this.message = this.M
         this.from = M.key.remoteJid || ''
         this.chat = this.from.endsWith('@s.whatsapp.net') ? 'dm' : 'group'
         this.sender = this.contact.getContact(
             this.chat === 'dm' ? this.correctJid(this.from) : this.correctJid(M.key.participant || '')
         )
+        this.M.messageStubType
         this.type = (Object.keys(M.message || {})[0] as MessageType) || 'conversation'
         if (this.M.pushName) this.sender.username = this.M.pushName
         const supportedMediaType = ['videoMessage', 'imageMessage']
@@ -84,6 +85,15 @@ export class Message {
         this.emojis = this.utils.extractEmojis(this.content)
     }
 
+    get stubType(): keyof typeof proto.WebMessageInfo.WebMessageInfoStubType {
+        return this.M
+            .messageStubType as proto.WebMessageInfo.WebMessageInfoStubType as unknown as keyof typeof proto.WebMessageInfo.WebMessageInfoStubType
+    }
+
+    get stubParameters(): string[] {
+        return this.M.messageStubParameters as string[]
+    }
+
     public reply = async (
         content: string | Buffer,
         type: 'text' | 'image' | 'video' | 'audio' | 'sticker' | 'document' = 'text',
@@ -112,7 +122,7 @@ export class Message {
                           externalAdReply
                       }
                     : undefined,
-                footer: options.sections?.length ? `🤍 ${this.helper.config.name} 🖤` : undefined,
+                footer: options.sections?.length ? `🤍 ${this.client.config.name} 🖤` : undefined,
                 sections: options.sections,
                 title: options.title,
                 buttonText: options.buttonText
@@ -171,7 +181,6 @@ export class Message {
         hasSupportedMediaMessage: boolean
         key: proto.IMessageKey
     }
-    public helper!: Helper
     public emojis: string[]
     public correctJid = (jid: string): string => `${jid.split('@')[0].split(':')[0]}@s.whatsapp.net`
 }

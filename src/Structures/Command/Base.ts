@@ -1,5 +1,5 @@
-import { client, IArgs, ICommand } from '../../Types'
-import { Helper, Message } from '../'
+import { IArgs, ICommand } from '../../Types'
+import { Client, Message } from '../'
 import { MessageHandler } from '../../Handlers'
 
 export class BaseCommand {
@@ -9,9 +9,7 @@ export class BaseCommand {
         throw new Error('Command method not implemented')
     }
 
-    public client!: client
-
-    public helper!: Helper
+    public client!: Client
 
     public handler!: MessageHandler
 }

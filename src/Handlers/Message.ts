@@ -1,15 +1,15 @@
 import { join } from 'path'
 import { readdirSync } from 'fs-extra'
 import chalk from 'chalk'
-import { Message, Helper, BaseCommand } from '../Structures'
+import { Message, Client, BaseCommand } from '../Structures'
 import { getStats } from '../lib'
-import { client, ICommand, IArgs } from '../Types'
+import { ICommand, IArgs } from '../Types'
 
 export class MessageHandler {
-    constructor(private client: client, private helper: Helper) {}
+    constructor(private client: Client) {}
 
     public handleMessage = async (M: Message): Promise<void> => {
-        const { prefix } = this.helper.config
+        const { prefix } = this.client.config
         const args = M.content.split(' ')
         let title = 'DM'
         if (M.chat === 'group')
@@ -17,40 +17,43 @@ export class MessageHandler {
                 .groupMetadata(M.from)
                 .then(({ subject }) => (title = subject))
                 .catch(() => (title = 'Group'))
+        await this.moderate(M)
         if (!args[0] || !args[0].startsWith(prefix))
-            return void this.helper.log(
+            return void this.client.log(
                 `${chalk.cyanBright('Message')} from ${chalk.yellowBright(M.sender.username)} in ${chalk.blueBright(
                     title
                 )}`
             )
-        this.helper.log(
+        this.client.log(
             `${chalk.cyanBright(`Command ${args[0]}[${args.length - 1}]`)} from ${chalk.yellowBright(
                 M.sender.username
             )} in ${chalk.blueBright(title)}`
         )
-        const { banned, tag } = await this.helper.DB.getUser(M.sender.jid)
+        const { banned, tag } = await this.client.DB.getUser(M.sender.jid)
         if (banned) return void M.reply('You are banned from using commands')
         if (!tag)
-            await this.helper.DB.updateUser(M.sender.jid, 'tag', 'set', this.helper.utils.generateRandomUniqueTag())
+            await this.client.DB.updateUser(M.sender.jid, 'tag', 'set', this.client.utils.generateRandomUniqueTag())
         const cmd = args[0].toLowerCase().slice(prefix.length)
         const command = this.commands.get(cmd) || this.aliases.get(cmd)
         if (!command) return void M.reply('No such command, Baka!')
-        const disabledCommands = await this.helper.DB.getDisabledCommands()
+        const disabledCommands = await this.client.DB.getDisabledCommands()
         const index = disabledCommands.findIndex((CMD) => CMD.command === command.name)
         if (index >= 0)
             return void M.reply(
-                `*${this.helper.utils.capitalize(cmd)}* is currently disabled by *${
+                `*${this.client.utils.capitalize(cmd)}* is currently disabled by *${
                     disabledCommands[index].disabledBy
                 }* in *${disabledCommands[index].time} (GMT)*. ❓ *Reason:* ${disabledCommands[index].reason}`
             )
-        if (command.config.category === 'dev' && !this.helper.config.mods.includes(M.sender.jid))
+        if (command.config.category === 'dev' && !this.client.config.mods.includes(M.sender.jid))
             return void M.reply('This command can only be used by the MODS')
         if (M.chat === 'dm' && !command.config.dm) return void M.reply('This command can only be used in groups')
+        if (command.config.category === 'moderation' && !(await this.isAdmin({ group: M.from, jid: M.sender.jid })))
+            return void M.reply('This command can only be used by the group admins')
         const cooldownAmount = (command.config.cooldown ?? 3) * 1000
         const time = cooldownAmount + Date.now()
         if (this.cooldowns.has(`${M.sender.jid}${command.name}`)) {
             const cd = this.cooldowns.get(`${M.sender.jid}${command.name}`)
-            const remainingTime = this.helper.utils.convertMs((cd as number) - Date.now())
+            const remainingTime = this.client.utils.convertMs((cd as number) - Date.now())
             return void M.reply(
                 `You are on a cooldown. Wait *${remainingTime}* ${
                     remainingTime > 1 ? 'seconds' : 'second'
@@ -58,12 +61,49 @@ export class MessageHandler {
             )
         } else this.cooldowns.set(`${M.sender.jid}${command.name}`, time)
         setTimeout(() => this.cooldowns.delete(`${M.sender.jid}${command.name}`), cooldownAmount)
-        await this.helper.DB.setExp(M.sender.jid, command.config.exp || 10)
+        await this.client.DB.setExp(M.sender.jid, command.config.exp || 10)
         await this.handleUserStats(M)
         try {
             await command.execute(M, this.formatArgs(args))
         } catch (error) {
-            this.helper.log((error as any).message, true)
+            this.client.log((error as any).message, true)
+        }
+    }
+
+    private moderate = async (M: Message): Promise<void> => {
+        if (M.chat !== 'group') return void null
+        const group = await this.client.DB.getGroup(M.from)
+        if (
+            !group.mods ||
+            (await this.isAdmin({ group: M.from, jid: M.sender.jid })) ||
+            !(await this.isAdmin({
+                group: M.from,
+                jid: M.correctJid(this.client.user.id)
+            }))
+        )
+            return void null
+        const urls = this.client.utils.extractUrls(M.content)
+        if (urls.length > 0) {
+            const groupinvites = urls.filter((url) => url.includes('chat.whatsapp.com'))
+            if (groupinvites.length > 0) {
+                groupinvites.forEach(async (invite) => {
+                    const code = await this.client.groupInviteCode(M.from)
+                    const inviteSplit = invite.split('/')
+                    if (inviteSplit[inviteSplit.length - 1] !== code) {
+                        let title!: string
+                        await this.client
+                            .groupMetadata(M.from)
+                            .then(({ subject }) => (title = subject))
+                            .catch(() => (title = 'Group'))
+                        this.client.log(
+                            `${chalk.blueBright('MOD')} ${chalk.green('Group Invite')} by ${chalk.yellow(
+                                M.sender.username
+                            )} in ${chalk.cyanBright(title)}`
+                        )
+                        return void (await this.client.groupParticipantsUpdate(M.from, [M.sender.jid], 'remove'))
+                    }
+                })
+            }
         }
     }
 
@@ -77,7 +117,7 @@ export class MessageHandler {
     }
 
     public loadCommands = (): void => {
-        this.helper.log('Loading Commands...')
+        this.client.log('Loading Commands...')
         const files = readdirSync(join(...this.path)).filter((file) => !file.startsWith('_'))
         for (const file of files) {
             this.path.push(file)
@@ -86,18 +126,17 @@ export class MessageHandler {
                 this.path.push(Command)
                 const command: BaseCommand = new (require(join(...this.path)).default)()
                 command.client = this.client
-                command.helper = this.helper
                 command.handler = this
                 this.commands.set(command.name, command)
                 if (command.config.aliases) command.config.aliases.forEach((alias) => this.aliases.set(alias, command))
-                this.helper.log(
+                this.client.log(
                     `Loaded: ${chalk.yellowBright(command.name)} from ${chalk.cyanBright(command.config.category)}`
                 )
                 this.path.splice(this.path.indexOf(Command), 1)
             }
             this.path.splice(this.path.indexOf(file), 1)
         }
-        return this.helper.log(
+        return this.client.log(
             `Successfully loaded ${chalk.cyanBright(this.commands.size)} ${
                 this.commands.size > 1 ? 'commands' : 'command'
             } with ${chalk.yellowBright(this.aliases.size)} ${this.aliases.size > 1 ? 'aliases' : 'alias'}`
@@ -105,10 +144,10 @@ export class MessageHandler {
     }
 
     private handleUserStats = async (M: Message): Promise<void> => {
-        const { experience, level } = await this.helper.DB.getUser(M.sender.jid)
+        const { experience, level } = await this.client.DB.getUser(M.sender.jid)
         const { requiredXpToLevelUp } = getStats(level)
         if (requiredXpToLevelUp > experience) return void null
-        await this.helper.DB.updateUser(M.sender.jid, 'level', 'inc', 1)
+        await this.client.DB.updateUser(M.sender.jid, 'level', 'inc', 1)
     }
 
     public isAdmin = async (options: { group: string; jid: string }): Promise<boolean> => {

@@ -19,7 +19,7 @@ export default class extends BaseCommand {
         if (M.hasSupportedMediaMessage) buffer = await M.downloadMediaMessage(M.message.message as proto.IMessage)
         else if (M.quoted && M.quoted.hasSupportedMediaMessage) buffer = await M.downloadMediaMessage(M.quoted.message)
         flags.forEach((flag) => (context = context.replace(flag, '')))
-        const numbersFlag = this.helper.utils
+        const numbersFlag = this.client.utils
             .extractNumbers(flags.join(' ').replace(/\--/g, ''))
             .filter((number) => number > 0 && number <= 100)
         const quality =
@@ -29,7 +29,7 @@ export default class extends BaseCommand {
         const sticker = new Sticker(buffer, {
             categories,
             pack: pack[1] ? pack[1].trim() : '🤍 Made for you',
-            author: pack[2] ? pack[2].trim() : `${this.helper.config.name} 🖤`,
+            author: pack[2] ? pack[2].trim() : `${this.client.config.name} 🖤`,
             quality,
             type:
                 flags.includes('--c') || flags.includes('--crop') || flags.includes('--cropped')
