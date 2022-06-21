@@ -6,7 +6,10 @@ export class EventHandler {
     constructor(private client: Client) {}
 
     public handleEvents = async (event: IEvent): Promise<void> => {
-        let group!: { subject: string; description: string }
+        let group: { subject: string; description: string } = {
+            subject: '',
+            description: ''
+        }
         await this.client
             .groupMetadata(event.jid)
             .then((res) => {

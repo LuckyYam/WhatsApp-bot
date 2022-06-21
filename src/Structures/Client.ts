@@ -63,7 +63,7 @@ export class Client extends (EventEmitter as new () => TypedEventEmitter<Events>
                     })()
                 })
             if (M.stubParameters && M.stubType === 'GROUP_CREATE')
-                this.emit('new_group_joined', { jid: M.from, subject: M.stubParameters[0] })
+                return this.emit('new_group_joined', { jid: M.from, subject: M.stubParameters[0] })
             return this.emit('new_message', M)
         })
         this.ev.on('group-participants.update', ({ id, action, participants }) =>

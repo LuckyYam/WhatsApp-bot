@@ -78,7 +78,7 @@ export default class extends BaseCommand {
             return void M.reply(
                 `${action === 'true' ? '🟩' : '🟥'} *${this.client.utils.capitalize(feature)} is now ${
                     action === 'true' ? 'Enabled' : 'Disabled'
-                }`
+                }*`
             )
         }
     }
