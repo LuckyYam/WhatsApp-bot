@@ -76,7 +76,7 @@ export default class extends BaseCommand {
                 )
             await this.client.DB.updateGroup(M.from, feature, action === 'true')
             return void M.reply(
-                `${action === '🟩' ? 'Enabled' : '🟥'} *${this.client.utils.capitalize(feature)} is now ${
+                `${action === 'true' ? '🟩' : '🟥'} *${this.client.utils.capitalize(feature)} is now ${
                     action === 'true' ? 'Enabled' : 'Disabled'
                 }`
             )
