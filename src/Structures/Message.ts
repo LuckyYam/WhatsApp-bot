@@ -1,7 +1,7 @@
 import { proto, MessageType, MediaType, AnyMessageContent, downloadContentFromMessage } from '@adiwajshing/baileys'
 import { Contact, Client } from '.'
 import { Utils } from '../lib'
-import { client, IContact, DownloadableMessage } from '../Types'
+import { IContact, DownloadableMessage } from '../Types'
 
 export class Message {
     constructor(private M: proto.IWebMessageInfo, private client: Client) {
@@ -11,6 +11,7 @@ export class Message {
         this.sender = this.contact.getContact(
             this.chat === 'dm' ? this.correctJid(this.from) : this.correctJid(M.key.participant || '')
         )
+        this.M.messageStubType
         this.type = (Object.keys(M.message || {})[0] as MessageType) || 'conversation'
         if (this.M.pushName) this.sender.username = this.M.pushName
         const supportedMediaType = ['videoMessage', 'imageMessage']
@@ -82,6 +83,15 @@ export class Message {
             }
         }
         this.emojis = this.utils.extractEmojis(this.content)
+    }
+
+    get stubType(): keyof typeof proto.WebMessageInfo.WebMessageInfoStubType {
+        return this.M
+            .messageStubType as proto.WebMessageInfo.WebMessageInfoStubType as unknown as keyof typeof proto.WebMessageInfo.WebMessageInfoStubType
+    }
+
+    get stubParameters(): string[] {
+        return this.M.messageStubParameters as string[]
     }
 
     public reply = async (

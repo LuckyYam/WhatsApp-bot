@@ -2,14 +2,20 @@ import chalk from 'chalk'
 import { config as Config } from 'dotenv'
 import EventEmitter from 'events'
 import TypedEventEmitter from 'typed-emitter'
-import Baileys, { DisconnectReason, fetchLatestBaileysVersion, WACallEvent } from '@adiwajshing/baileys'
+import Baileys, {
+    DisconnectReason,
+    fetchLatestBaileysVersion,
+    WACallEvent,
+    proto,
+    ParticipantAction
+} from '@adiwajshing/baileys'
 import P from 'pino'
 import { connect } from 'mongoose'
 import { Boom } from '@hapi/boom'
 import qr from 'qr-image'
 import { Utils } from '../lib'
 import { Database, Contact, Message, AuthenticationFromDatabase } from '.'
-import { IConfig, client } from '../Types'
+import { IConfig, client, IEvent } from '../Types'
 
 export class Client extends (EventEmitter as new () => TypedEventEmitter<Events>) implements client {
     private client!: client
@@ -44,11 +50,29 @@ export class Client extends (EventEmitter as new () => TypedEventEmitter<Events>
             this[method as keyof Client] = this.client[method as keyof client]
         this.ev.on('call', (call) => this.emit('new_call', call[0]))
         this.ev.on('contacts.update', async (contacts) => await this.contact.saveContacts(contacts))
-        this.ev.on('messages.upsert', ({ messages }) => {
+        this.ev.on('messages.upsert', async ({ messages }) => {
             const M = new Message(messages[0], this)
             if (M.type === 'protocolMessage' || M.type === 'senderKeyDistributionMessage') return
+            if (M.stubParameters && this.events.includes(M.stubType))
+                return this.emit('participants_update', {
+                    jid: M.from,
+                    participants: M.stubParameters,
+                    action: ((): ParticipantAction => {
+                        const stubTypeSplit = M.stubType.toLowerCase().split('_')
+                        return stubTypeSplit[stubTypeSplit.length - 1] as ParticipantAction
+                    })()
+                })
+            if (M.stubParameters && M.stubType === 'GROUP_CREATE')
+                this.emit('new_group_joined', { jid: M.from, subject: M.stubParameters[0] })
             return this.emit('new_message', M)
         })
+        this.ev.on('group-participants.update', ({ id, action, participants }) =>
+            this.emit('participants_update', {
+                jid: id,
+                action,
+                participants
+            })
+        )
         this.ev.on('connection.update', (update) => {
             if (update.qr) {
                 this.log(
@@ -92,6 +116,11 @@ export class Client extends (EventEmitter as new () => TypedEventEmitter<Events>
     public contact = new Contact()
 
     public assets = new Map<string, Buffer>()
+
+    private events = new Array<keyof typeof proto.WebMessageInfo.WebMessageInfoStubType>(
+        'GROUP_PARTICIPANT_DEMOTE',
+        'GROUP_PARTICIPANT_PROMOTE'
+    )
 
     public log = (text: string, error: boolean = false): void =>
         console.log(
@@ -171,4 +200,6 @@ export class Client extends (EventEmitter as new () => TypedEventEmitter<Events>
 type Events = {
     new_call: (call: WACallEvent) => void
     new_message: (M: Message) => void
+    participants_update: (event: IEvent) => void
+    new_group_joined: (group: { jid: string; subject: string }) => void
 }

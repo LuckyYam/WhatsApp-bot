@@ -17,6 +17,7 @@ export class MessageHandler {
                 .groupMetadata(M.from)
                 .then(({ subject }) => (title = subject))
                 .catch(() => (title = 'Group'))
+        await this.moderate(M)
         if (!args[0] || !args[0].startsWith(prefix))
             return void this.client.log(
                 `${chalk.cyanBright('Message')} from ${chalk.yellowBright(M.sender.username)} in ${chalk.blueBright(
@@ -46,6 +47,8 @@ export class MessageHandler {
         if (command.config.category === 'dev' && !this.client.config.mods.includes(M.sender.jid))
             return void M.reply('This command can only be used by the MODS')
         if (M.chat === 'dm' && !command.config.dm) return void M.reply('This command can only be used in groups')
+        if (command.config.category === 'moderation' && !(await this.isAdmin({ group: M.from, jid: M.sender.jid })))
+            return void M.reply('This command can only be used by the group admins')
         const cooldownAmount = (command.config.cooldown ?? 3) * 1000
         const time = cooldownAmount + Date.now()
         if (this.cooldowns.has(`${M.sender.jid}${command.name}`)) {
@@ -64,6 +67,43 @@ export class MessageHandler {
             await command.execute(M, this.formatArgs(args))
         } catch (error) {
             this.client.log((error as any).message, true)
+        }
+    }
+
+    private moderate = async (M: Message): Promise<void> => {
+        if (M.chat !== 'group') return void null
+        const group = await this.client.DB.getGroup(M.from)
+        if (
+            !group.mods ||
+            (await this.isAdmin({ group: M.from, jid: M.sender.jid })) ||
+            !(await this.isAdmin({
+                group: M.from,
+                jid: M.correctJid(this.client.user.id)
+            }))
+        )
+            return void null
+        const urls = this.client.utils.extractUrls(M.content)
+        if (urls.length > 0) {
+            const groupinvites = urls.filter((url) => url.includes('chat.whatsapp.com'))
+            if (groupinvites.length > 0) {
+                groupinvites.forEach(async (invite) => {
+                    const code = await this.client.groupInviteCode(M.from)
+                    const inviteSplit = invite.split('/')
+                    if (inviteSplit[inviteSplit.length - 1] !== code) {
+                        let title!: string
+                        await this.client
+                            .groupMetadata(M.from)
+                            .then(({ subject }) => (title = subject))
+                            .catch(() => (title = 'Group'))
+                        this.client.log(
+                            `${chalk.blueBright('MOD')} ${chalk.green('Group Invite')} by ${chalk.yellow(
+                                M.sender.username
+                            )} in ${chalk.cyanBright(title)}`
+                        )
+                        return void (await this.client.groupParticipantsUpdate(M.from, [M.sender.jid], 'remove'))
+                    }
+                })
+            }
         }
     }
 
