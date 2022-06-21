@@ -85,7 +85,7 @@ const start = async (): Promise<client> => {
     client.ev.on('messages.upsert', async ({ messages }) => {
         const M = new Message(messages[0], client)
         M.helper = helper
-        if (M.type === 'protocolMessage' || M.type === 'senderKeyDistributionMessage') return
+        if (M.type === 'protocolMessage') return
         helper.emit('new-message', M)
     })
 
