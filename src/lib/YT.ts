@@ -46,7 +46,7 @@ export class YT {
         })
         filename = `${filename}.mp4`
         await this.utils.exec(
-            `ffmpeg.exe -i ${audioFilename} -i ${videoFilename} -acodec copy -vcodec copy ${filename}`
+            `ffmpeg -i ${audioFilename} -i ${videoFilename} -acodec copy -vcodec copy ${filename}`
         )
         const buffer = await readFile(filename)
         Promise.all([unlink(videoFilename), unlink(audioFilename), unlink(filename)])
