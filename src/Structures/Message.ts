@@ -11,7 +11,6 @@ export class Message {
         this.sender = this.contact.getContact(
             this.chat === 'dm' ? this.correctJid(this.from) : this.correctJid(M.key.participant || '')
         )
-        this.M.messageStubType
         this.type = (Object.keys(M.message || {})[0] as MessageType) || 'conversation'
         if (this.M.pushName) this.sender.username = this.M.pushName
         const supportedMediaType = ['videoMessage', 'imageMessage']
@@ -85,13 +84,12 @@ export class Message {
         this.emojis = this.utils.extractEmojis(this.content)
     }
 
-    get stubType(): keyof typeof proto.WebMessageInfo.WebMessageInfoStubType {
-        return this.M
-            .messageStubType as proto.WebMessageInfo.WebMessageInfoStubType as unknown as keyof typeof proto.WebMessageInfo.WebMessageInfoStubType
+    get stubType(): TSTubType | undefined | null {
+        return this.M.messageStubType ? (this.M.messageStubType.toString() as TSTubType) : undefined
     }
 
-    get stubParameters(): string[] {
-        return this.M.messageStubParameters as string[]
+    get stubParameters(): string[] | undefined | null {
+        return this.M.messageStubParameters
     }
 
     public reply = async (
@@ -184,3 +182,5 @@ export class Message {
     public emojis: string[]
     public correctJid = (jid: string): string => `${jid.split('@')[0].split(':')[0]}@s.whatsapp.net`
 }
+
+export type TSTubType = `${proto.WebMessageInfo.WebMessageInfoStubType}`
