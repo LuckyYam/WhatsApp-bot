@@ -45,7 +45,7 @@ export class YT {
             stream.on('error', (error) => reject(error && console.log(error)))
         })
         await this.utils.exec(
-            `ffmpeg -i ${audioFilename} -i ${videoFilename} -acodec copy -vcodec copy ${filename}`
+            `ffmpeg -i ${videoFilename} -i ${audioFilename} -c:v copy -c:a aac ${filename}`
         )
         const buffer = await readFile(filename)
         Promise.all([unlink(videoFilename), unlink(audioFilename), unlink(filename)])
