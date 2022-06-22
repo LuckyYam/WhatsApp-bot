@@ -33,7 +33,7 @@ export class YT {
             quality: 'highestaudio'
         }).pipe(audioStream)
         audioFilename = await new Promise((resolve, reject) => {
-            audioStream.on('finish', () => resolve(filename))
+            audioStream.on('finish', () => resolve(audioFilename))
             audioStream.on('error', (error) => reject(error && console.log(error)))
         })
         const stream = createWriteStream(videoFilename)
@@ -41,7 +41,7 @@ export class YT {
             quality: 'highestvideo'
         }).pipe(stream)
         videoFilename = await new Promise((resolve, reject) => {
-            stream.on('finish', () => resolve(filename))
+            stream.on('finish', () => resolve(videoFilename))
             stream.on('error', (error) => reject(error && console.log(error)))
         })
         filename = `${filename}.mp4`
