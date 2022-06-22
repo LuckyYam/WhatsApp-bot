@@ -54,8 +54,12 @@ export class Client extends (EventEmitter as new () => TypedEventEmitter<Events>
         this.ev.on('messages.upsert', async ({ messages }) => {
             const M = new Message(messages[0], this)
             if (M.type === 'protocolMessage' || M.type === 'senderKeyDistributionMessage') return void null
-            let action!: ParticipantAction
             if (M.stubType && M.stubParameters) {
+                const emitParticipantsUpdate = (action: ParticipantAction): boolean => this.emit('participants_update', {
+                    jid: M.from,
+                    participants: M.stubParameters as string[],
+                    action
+                })
                 switch (M.stubType) {
                     case proto.WebMessageInfo.WebMessageInfoStubType.GROUP_CREATE:
                         return void this.emit('new_group_joined', {
@@ -65,24 +69,15 @@ export class Client extends (EventEmitter as new () => TypedEventEmitter<Events>
                     case proto.WebMessageInfo.WebMessageInfoStubType.GROUP_PARTICIPANT_ADD:
                     case proto.WebMessageInfo.WebMessageInfoStubType.GROUP_PARTICIPANT_ADD_REQUEST_JOIN:
                     case proto.WebMessageInfo.WebMessageInfoStubType.GROUP_PARTICIPANT_INVITE:
-                        action = 'add'
-                        break
+                        return void emitParticipantsUpdate('add')
                     case proto.WebMessageInfo.WebMessageInfoStubType.GROUP_PARTICIPANT_LEAVE:
                     case proto.WebMessageInfo.WebMessageInfoStubType.GROUP_PARTICIPANT_REMOVE:
-                        action = 'remove'
-                        break
+                        return void emitParticipantsUpdate('remove')
                     case proto.WebMessageInfo.WebMessageInfoStubType.GROUP_PARTICIPANT_DEMOTE:
-                        action = 'demote'
-                        break
+                        return void emitParticipantsUpdate('demote')
                     case proto.WebMessageInfo.WebMessageInfoStubType.GROUP_PARTICIPANT_PROMOTE:
-                        action = 'promote'
-                        break
+                        return void emitParticipantsUpdate('promote')
                 }
-                return void this.emit('participants_update', {
-                    jid: M.from,
-                    participants: M.stubParameters,
-                    action
-                })
             }
             return void this.emit('new_message', await M.simplify())
         })
