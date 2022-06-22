@@ -2,13 +2,19 @@ import chalk from 'chalk'
 import { config as Config } from 'dotenv'
 import EventEmitter from 'events'
 import TypedEventEmitter from 'typed-emitter'
-import Baileys, { DisconnectReason, fetchLatestBaileysVersion, WACallEvent } from '@adiwajshing/baileys'
+import Baileys, {
+    DisconnectReason,
+    fetchLatestBaileysVersion,
+    ParticipantAction,
+    proto,
+    WACallEvent
+} from '@adiwajshing/baileys'
 import P from 'pino'
 import { connect } from 'mongoose'
 import { Boom } from '@hapi/boom'
 import qr from 'qr-image'
 import { Utils } from '../lib'
-import { Database, Contact, Message, AuthenticationFromDatabase, TSTubType, Server } from '.'
+import { Database, Contact, Message, AuthenticationFromDatabase, Server } from '.'
 import { IConfig, client, IEvent } from '../Types'
 
 export class Client extends (EventEmitter as new () => TypedEventEmitter<Events>) implements client {
@@ -48,22 +54,35 @@ export class Client extends (EventEmitter as new () => TypedEventEmitter<Events>
         this.ev.on('messages.upsert', async ({ messages }) => {
             const M = new Message(messages[0], this)
             if (M.type === 'protocolMessage' || M.type === 'senderKeyDistributionMessage') return void null
+            let action!: ParticipantAction
             if (M.stubType && M.stubParameters) {
-                if (M.stubType === '20')
-                    return void this.emit('new_group_joined', { jid: M.from, subject: M.stubParameters[0] })
-                if (this.events.includes(M.stubType))
-                    return void this.emit('participants_update', {
-                        jid: M.from,
-                        participants: M.stubParameters,
-                        action:
-                            M.stubType === '29'
-                                ? 'promote'
-                                : M.stubType === '30'
-                                ? 'demote'
-                                : M.stubType === '27' || M.stubType === '31' || M.stubType === '71'
-                                ? 'add'
-                                : 'remove'
-                    })
+                switch (M.stubType) {
+                    case proto.WebMessageInfo.WebMessageInfoStubType.GROUP_CREATE:
+                        return void this.emit('new_group_joined', {
+                            jid: M.from,
+                            subject: M.stubParameters[0]
+                        })
+                    case proto.WebMessageInfo.WebMessageInfoStubType.GROUP_PARTICIPANT_ADD:
+                    case proto.WebMessageInfo.WebMessageInfoStubType.GROUP_PARTICIPANT_ADD_REQUEST_JOIN:
+                    case proto.WebMessageInfo.WebMessageInfoStubType.GROUP_PARTICIPANT_INVITE:
+                        action = 'add'
+                        break
+                    case proto.WebMessageInfo.WebMessageInfoStubType.GROUP_PARTICIPANT_LEAVE:
+                    case proto.WebMessageInfo.WebMessageInfoStubType.GROUP_PARTICIPANT_REMOVE:
+                        action = 'remove'
+                        break
+                    case proto.WebMessageInfo.WebMessageInfoStubType.GROUP_PARTICIPANT_DEMOTE:
+                        action = 'demote'
+                        break
+                    case proto.WebMessageInfo.WebMessageInfoStubType.GROUP_PARTICIPANT_PROMOTE:
+                        action = 'promote'
+                        break
+                }
+                return void this.emit('participants_update', {
+                    jid: M.from,
+                    participants: M.stubParameters,
+                    action
+                })
             }
             return void this.emit('new_message', await M.simplify())
         })
@@ -120,8 +139,6 @@ export class Client extends (EventEmitter as new () => TypedEventEmitter<Events>
     public correctJid = (jid: string): string => `${jid.split('@')[0].split(':')[0]}@s.whatsapp.net`
 
     public assets = new Map<string, Buffer>()
-
-    private events = new Array<TSTubType>('29', '30', '27', '32', '28', '31', '71')
 
     public log = (text: string, error: boolean = false): void =>
         console.log(

@@ -106,8 +106,8 @@ export class Message {
         return this
     }
 
-    get stubType(): TSTubType | undefined | null {
-        return this.M.messageStubType ? (this.M.messageStubType.toString() as TSTubType) : undefined
+    get stubType(): proto.WebMessageInfo.WebMessageInfoStubType | undefined | null {
+        return this.M.messageStubType
     }
 
     get stubParameters(): string[] | undefined | null {
@@ -201,5 +201,3 @@ export class Message {
     }
     public emojis: string[]
 }
-
-export type TSTubType = `${proto.WebMessageInfo.WebMessageInfoStubType}`
