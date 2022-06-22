@@ -5,6 +5,7 @@ import { exec } from 'child_process'
 import { readFile, unlink, writeFile } from 'fs-extra'
 import regex from 'emoji-regex'
 import getUrls from 'get-urls'
+import { YT } from '.'
 
 export class Utils {
     public generateRandomHex = (): string => `#${(~~(Math.random() * (1 << 24))).toString(16)}`
@@ -59,6 +60,8 @@ export class Utils {
         Promise.all([unlink(`${filename}.gif`), unlink(`${filename}.mp4`)])
         return buffer
     }
+
+    public YT = (url: string, type: 'video' | 'audio'): YT => new YT(url, type)
 
     public fetch = async <T>(url: string): Promise<T> => (await axios.get(url)).data
 
