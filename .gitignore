@@ -4,3 +4,5 @@ session.json
 yarn-error.log
 dist
 aye.json
+*.js
+*.mp3

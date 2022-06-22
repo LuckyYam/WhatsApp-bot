@@ -11,9 +11,8 @@ export class YT {
     public getInfo = async (): Promise<ytdl.videoInfo> => await getInfo(this.url)
 
     public download = async (quality: 'high' | 'medium' | 'low' = 'medium'): Promise<Buffer> => {
-        let filename = `${tmpdir()}/${Math.random().toString(36)}`
         if (this.type === 'audio' || quality === 'medium') {
-            filename = `${filename}.${this.type === 'audio' ? 'mp3' : 'mp4'}`
+            let filename = `${tmpdir()}/${Math.random().toString(36)}.${this.type === 'audio' ? 'mp3' : 'mp4'}`
             const stream = createWriteStream(filename)
             ytdl(this.url, {
                 quality: this.type === 'audio' ? 'highestaudio' : 'highest'
@@ -26,8 +25,9 @@ export class YT {
             await unlink(filename)
             return buffer
         }
-        let audioFilename = `${filename}.mp3`
-        let videoFilename = `${filename}.mp4`
+        let audioFilename = `${tmpdir()}/${Math.random().toString(36)}.mp3`
+        let videoFilename = `${tmpdir()}/${Math.random().toString(36)}.mp4`
+        const filename = `${tmpdir()}/${Math.random().toString(36)}.mp4`
         const audioStream = createWriteStream(audioFilename)
         ytdl(this.url, {
             quality: 'highestaudio'
@@ -44,7 +44,6 @@ export class YT {
             stream.on('finish', () => resolve(videoFilename))
             stream.on('error', (error) => reject(error && console.log(error)))
         })
-        filename = `${filename}.mp4`
         await this.utils.exec(
             `ffmpeg -i ${audioFilename} -i ${videoFilename} -acodec copy -vcodec copy ${filename}`
         )
