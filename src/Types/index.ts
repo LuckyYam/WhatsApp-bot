@@ -7,6 +7,11 @@ export * from './Message'
 export interface IContact {
     jid: string
     username: string
+    isMod: boolean
+}
+
+export interface ISender extends IContact {
+    isAdmin: boolean
 }
 
 export interface IEvent {

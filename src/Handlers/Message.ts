@@ -47,7 +47,7 @@ export class MessageHandler {
         if (command.config.category === 'dev' && !this.client.config.mods.includes(M.sender.jid))
             return void M.reply('This command can only be used by the MODS')
         if (M.chat === 'dm' && !command.config.dm) return void M.reply('This command can only be used in groups')
-        if (command.config.category === 'moderation' && !(await this.isAdmin({ group: M.from, jid: M.sender.jid })))
+        if (command.config.category === 'moderation' && !M.sender.isAdmin)
             return void M.reply('This command can only be used by the group admins')
         const cooldownAmount = (command.config.cooldown ?? 3) * 1000
         const time = cooldownAmount + Date.now()
@@ -72,16 +72,9 @@ export class MessageHandler {
 
     private moderate = async (M: Message): Promise<void> => {
         if (M.chat !== 'group') return void null
-        const group = await this.client.DB.getGroup(M.from)
-        if (
-            !group.mods ||
-            (await this.isAdmin({ group: M.from, jid: M.sender.jid })) ||
-            !(await this.isAdmin({
-                group: M.from,
-                jid: M.correctJid(this.client.user.id)
-            }))
-        )
-            return void null
+        const { mods } = await this.client.DB.getGroup(M.from)
+        const isAdmin = await this.client.isAdmin({ group: M.from, jid: this.client.correctJid(this.client.user.id) })
+        if (!mods || M.sender.isAdmin || !isAdmin) return void null
         const urls = this.client.utils.extractUrls(M.content)
         if (urls.length > 0) {
             const groupinvites = urls.filter((url) => url.includes('chat.whatsapp.com'))
@@ -148,14 +141,6 @@ export class MessageHandler {
         const { requiredXpToLevelUp } = getStats(level)
         if (requiredXpToLevelUp > experience) return void null
         await this.client.DB.updateUser(M.sender.jid, 'level', 'inc', 1)
-    }
-
-    public isAdmin = async (options: { group: string; jid: string }): Promise<boolean> => {
-        const data = (await this.client.groupMetadata(options.group)).participants
-        const index = data.findIndex((x) => x.id === options.jid)
-        if (index < -1) return false
-        const admin = !data[index] || !data[index].admin || data[index].admin !== null
-        return admin
     }
 
     public commands = new Map<string, ICommand>()

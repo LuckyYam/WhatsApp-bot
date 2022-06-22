@@ -1,8 +1,9 @@
 import { IContact } from '../Types'
 import { Contact as contact } from '@adiwajshing/baileys'
-import { Database } from '.'
+import { Database, Client } from '.'
 
 export class Contact {
+    constructor(private client: Client) {}
     public saveContacts = async (contacts: Partial<contact>[]): Promise<void> => {
         if (!this.contacts.has('contacts')) {
             const data = await this.DB.getContacts()
@@ -32,21 +33,25 @@ export class Contact {
 
     public getContact = (jid: string): IContact => {
         const contact = this.contacts.get('contacts')
+        const isMod = this.client.config.mods.includes(jid)
         if (!contact)
             return {
                 username: 'User',
-                jid
+                jid,
+                isMod
             }
         const index = contact.findIndex(({ id }) => id === jid)
         if (index < 0)
             return {
                 username: 'User',
-                jid
+                jid,
+                isMod
             }
         const { notify, verifiedName, name } = contact[index]
         return {
             username: notify || verifiedName || name || 'User',
-            jid
+            jid,
+            isMod
         }
     }
 

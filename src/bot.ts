@@ -1,11 +1,9 @@
-import { Client, Server } from './Structures'
+import { Client } from './Structures'
 import { MessageHandler, AssetHandler, CallHandler, EventHandler } from './Handlers'
 
-const client = new Client()
-
-new Server(client)
-
 const start = async (): Promise<void> => {
+    const client = new Client()
+
     await client.start()
 
     new AssetHandler(client).loadAssets()

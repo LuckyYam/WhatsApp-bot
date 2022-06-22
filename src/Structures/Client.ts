@@ -2,18 +2,13 @@ import chalk from 'chalk'
 import { config as Config } from 'dotenv'
 import EventEmitter from 'events'
 import TypedEventEmitter from 'typed-emitter'
-import Baileys, {
-    DisconnectReason,
-    fetchLatestBaileysVersion,
-    WACallEvent,
-    ParticipantAction
-} from '@adiwajshing/baileys'
+import Baileys, { DisconnectReason, fetchLatestBaileysVersion, WACallEvent } from '@adiwajshing/baileys'
 import P from 'pino'
 import { connect } from 'mongoose'
 import { Boom } from '@hapi/boom'
 import qr from 'qr-image'
 import { Utils } from '../lib'
-import { Database, Contact, Message, AuthenticationFromDatabase, TSTubType } from '.'
+import { Database, Contact, Message, AuthenticationFromDatabase, TSTubType, Server } from '.'
 import { IConfig, client, IEvent } from '../Types'
 
 export class Client extends (EventEmitter as new () => TypedEventEmitter<Events>) implements client {
@@ -28,6 +23,7 @@ export class Client extends (EventEmitter as new () => TypedEventEmitter<Events>
             mods: (process.env.MODS || '').split(', ').map((user) => `${user}@s.whatsapp.net`),
             PORT: Number(process.env.PORT || 3000)
         }
+        new Server(this)
     }
 
     public start = async (): Promise<client> => {
@@ -64,12 +60,12 @@ export class Client extends (EventEmitter as new () => TypedEventEmitter<Events>
                                 ? 'promote'
                                 : M.stubType === '30'
                                 ? 'demote'
-                                : M.stubType === '27'
+                                : M.stubType === '27' || M.stubType === '31' || M.stubType === '71'
                                 ? 'add'
                                 : 'remove'
                     })
             }
-            return void this.emit('new_message', M)
+            return void this.emit('new_message', await M.simplify())
         })
         this.ev.on('connection.update', (update) => {
             if (update.qr) {
@@ -111,11 +107,21 @@ export class Client extends (EventEmitter as new () => TypedEventEmitter<Events>
 
     public config: IConfig
 
-    public contact = new Contact()
+    public contact = new Contact(this)
+
+    public isAdmin = async (options: { group: string; jid: string }): Promise<boolean> => {
+        const data = (await this.client.groupMetadata(options.group)).participants
+        const index = data.findIndex((x) => x.id === options.jid)
+        if (index < -1) return false
+        const admin = data[index] && data[index].admin !== undefined && data[index].admin !== null
+        return admin
+    }
+
+    public correctJid = (jid: string): string => `${jid.split('@')[0].split(':')[0]}@s.whatsapp.net`
 
     public assets = new Map<string, Buffer>()
 
-    private events = new Array<TSTubType>('29', '30', '27', '32', '28')
+    private events = new Array<TSTubType>('29', '30', '27', '32', '28', '31', '71')
 
     public log = (text: string, error: boolean = false): void =>
         console.log(
