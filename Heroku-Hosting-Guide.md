@@ -20,7 +20,7 @@
  - `PREFIX`: Prefix of the bot
  - `NAME`: Name of the bot
  - `MONGO_URI`: A secret String for MongoDB connection. (Required)
- - `MODS`: Number of the users who should be the admins of the bot (should be in international format without "+" and multiple numbers must be separated by a comma ", ")
+ - `MODS`: Number of the users who should be the admins of the bot (should be in international format without "+" and multiple numbers should be separated by a comma  and a space. (91484xxxx, 1234xxxx)
  - `SESSION`: Session of the bot
 5. Wait for the building to finish, you should always keep an eye on log messages, you can find log messages in the Dashboard -> More -> View logs.<br>
 6. After it builds, click on the "View" or "Open App".<br>
