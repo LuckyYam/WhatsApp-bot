@@ -26,7 +26,12 @@ export class EventHandler {
             )} in ${chalk.cyanBright(group.subject)}`
         )
         const { events } = await this.client.DB.getGroup(event.jid)
-        if (!events) return void null
+        if (
+            !events ||
+            (event.action === 'remove' &&
+                event.participants.includes(`${this.client.user.id.split('@')[0].split(':')[0]}@s.whatsapp.net`))
+        )
+            return void null
         const text =
             event.action === 'add'
                 ? `- ${group.subject} -\n\n💈 *Group Description:*\n${
@@ -35,9 +40,9 @@ export class EventHandler {
                       .map((jid) => `@${jid.split('@')[0]}`)
                       .join(' ')}*`
                 : event.action === 'remove'
-                ? `Goodbye *@${event.participants
+                ? `Goodbye *${event.participants
                       .map((jid) => `@${jid.split('@')[0]}`)
-                      .join(', ')}}* 👋🏻, we're probably not gonna miss you.`
+                      .join(', ')}* 👋🏻, we're probably not gonna miss you.`
                 : event.action === 'demote'
                 ? `Ara Ara, looks like *@${event.participants[0].split('@')[0]}* got Demoted`
                 : `Congratulations *@${event.participants[0].split('@')[0]}*, you're now an admin`

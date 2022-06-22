@@ -1,17 +1,21 @@
 import { proto, MessageType, MediaType, AnyMessageContent, downloadContentFromMessage } from '@adiwajshing/baileys'
-import { Contact, Client } from '.'
-import { Utils } from '../lib'
-import { IContact, DownloadableMessage } from '../Types'
+import { Client } from '.'
+import { ISender, DownloadableMessage } from '../Types'
 
 export class Message {
     constructor(private M: proto.IWebMessageInfo, private client: Client) {
         this.message = this.M
         this.from = M.key.remoteJid || ''
         this.chat = this.from.endsWith('@s.whatsapp.net') ? 'dm' : 'group'
-        this.sender = this.contact.getContact(
-            this.chat === 'dm' ? this.correctJid(this.from) : this.correctJid(M.key.participant || '')
+        const { jid, username, isMod } = this.client.contact.getContact(
+            this.chat === 'dm' ? this.client.correctJid(this.from) : this.client.correctJid(M.key.participant || '')
         )
-        this.M.messageStubType
+        this.sender = {
+            jid,
+            username,
+            isMod,
+            isAdmin: false
+        }
         this.type = (Object.keys(M.message || {})[0] as MessageType) || 'conversation'
         if (this.M.pushName) this.sender.username = this.M.pushName
         const supportedMediaType = ['videoMessage', 'imageMessage']
@@ -40,7 +44,7 @@ export class Message {
         for (const mentioned of mentions) this.mentioned.push(mentioned)
         let text = this.content
         for (const mentioned of this.mentioned) text = text.replace(mentioned.split('@')[0], '')
-        this.numbers = this.utils.extractNumbers(text)
+        this.numbers = this.client.utils.extractNumbers(text)
         if (M.message?.[this.type as 'extendedTextMessage']?.contextInfo?.quotedMessage) {
             const { quotedMessage, participant, stanzaId } =
                 M.message?.[this.type as 'extendedTextMessage']?.contextInfo || {}
@@ -61,10 +65,18 @@ export class Message {
                         ? quotedMessage?.extendedTextMessage.text
                         : ''
                 }
+                const { username, jid, isMod } = this.client.contact.getContact(this.client.correctJid(participant))
                 this.quoted = {
-                    sender: this.contact.getContact(this.correctJid(participant)) || {
+                    sender: {
+                        jid,
+                        username,
+                        isMod,
+                        isAdmin: false
+                    } || {
                         username: 'User',
-                        jid: this.correctJid(participant)
+                        jid: this.client.correctJid(participant),
+                        isMod: this.client.config.mods.includes(this.client.correctJid(participant)),
+                        isAdmin: false
                     },
                     content: getQuotedContent(),
                     message: quotedMessage,
@@ -75,23 +87,31 @@ export class Message {
                             : supportedMediaType.includes(Object.keys(quotedMessage?.buttonsMessage || {})[1]),
                     key: {
                         remoteJid: this.from,
-                        fromMe: this.correctJid(participant) === this.correctJid(this.client.user.id),
+                        fromMe: this.client.correctJid(participant) === this.client.correctJid(this.client.user.id),
                         id: stanzaId,
                         participant
                     }
                 }
             }
         }
-        this.emojis = this.utils.extractEmojis(this.content)
+        this.emojis = this.client.utils.extractEmojis(this.content)
     }
 
-    get stubType(): keyof typeof proto.WebMessageInfo.WebMessageInfoStubType {
-        return this.M
-            .messageStubType as proto.WebMessageInfo.WebMessageInfoStubType as unknown as keyof typeof proto.WebMessageInfo.WebMessageInfoStubType
+    public simplify = async (): Promise<Message> => {
+        if (this.chat === 'dm') return this
+        const isAdmin = await this.client.isAdmin({ group: this.from, jid: this.sender.jid })
+        this.sender.isAdmin = isAdmin
+        if (this.quoted)
+            this.quoted.sender.isAdmin = await this.client.isAdmin({ group: this.from, jid: this.quoted.sender.jid })
+        return this
     }
 
-    get stubParameters(): string[] {
-        return this.M.messageStubParameters as string[]
+    get stubType(): TSTubType | undefined | null {
+        return this.M.messageStubType ? (this.M.messageStubType.toString() as TSTubType) : undefined
+    }
+
+    get stubParameters(): string[] | undefined | null {
+        return this.M.messageStubParameters
     }
 
     public reply = async (
@@ -162,10 +182,8 @@ export class Message {
         return buffer
     }
 
-    private utils = new Utils()
-    private contact = new Contact()
     public from: string
-    public sender: IContact
+    public sender: ISender
     public content: string
     public numbers: number[]
     public hasSupportedMediaMessage: boolean
@@ -175,12 +193,13 @@ export class Message {
     public mentioned: string[] = []
     public quoted?: {
         content: string
-        sender: IContact
+        sender: ISender
         type: MessageType
         message: proto.IMessage
         hasSupportedMediaMessage: boolean
         key: proto.IMessageKey
     }
     public emojis: string[]
-    public correctJid = (jid: string): string => `${jid.split('@')[0].split(':')[0]}@s.whatsapp.net`
 }
+
+export type TSTubType = `${proto.WebMessageInfo.WebMessageInfoStubType}`

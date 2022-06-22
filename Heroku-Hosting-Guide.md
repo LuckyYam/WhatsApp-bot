@@ -20,10 +20,10 @@
  - `PREFIX`: Prefix of the bot
  - `NAME`: Name of the bot
  - `MONGO_URI`: A secret String for MongoDB connection. (Required)
- - `MODS`: Number of the users who should be the admins of the bot (should be in international format without "+" and multiple numbers must be separated by a comma ", ")
+ - `MODS`: Number of the users who should be the admins of the bot (should be in international format without "+" and multiple numbers should be separated by a comma  and a space). Example - 1234567890, 91245670325 (you shouldn't add "@s.whatsapp.net" at the end of each numbers)
  - `SESSION`: Session of the bot
 5. Wait for the building to finish, you should always keep an eye on log messages, you can find log messages in the Dashboard -> More -> View logs.<br>
 6. After it builds, click on the "View" or "Open App".<br>
-7. Authenticate By going to http://your_app_name/qr/your_session>.<br>
+7. Authenticate By Providing Your SESSION_ID and a QR Code Will Show Up.<br>
 8. Open WhatsApp on your phone -> Click on the 3 Dots on the top Right -> Click on WhatsApp Web -> Click on "Link a Device" and scan the QR from the previous step.<br>
 9. Your heroku app can fall asleep so for keeping it awaken add your app to ([Kaffeine](https://kaffeine.herokuapp.com/))<br>. It pings your Heroku app every 30 minutes so it will never go to sleep.<br>
