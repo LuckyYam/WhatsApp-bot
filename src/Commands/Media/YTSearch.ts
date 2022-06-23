@@ -25,8 +25,8 @@ export default class extends BaseCommand {
         return void (await M.reply(text, 'text', undefined, undefined, undefined, undefined, {
             title: videos[0].title,
             thumbnail: await this.client.utils.getBuffer(videos[0].thumbnail),
-            body: videos[0].description,
             mediaType: 2,
+            body: videos[0].description,
             mediaUrl: videos[0].url
         }))
     }
