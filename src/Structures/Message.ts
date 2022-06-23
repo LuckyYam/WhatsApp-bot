@@ -38,6 +38,7 @@ export class Message {
                 : ''
         }
         this.content = getContent()
+        this.urls = this.client.utils.extractUrls(this.content)
         const mentions = (M.message?.[this.type as 'extendedTextMessage']?.contextInfo?.mentionedJid || []).filter(
             (x) => x !== null && x !== undefined
         )
@@ -200,4 +201,5 @@ export class Message {
         key: proto.IMessageKey
     }
     public emojis: string[]
+    public urls: string[]
 }
