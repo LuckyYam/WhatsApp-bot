@@ -38,15 +38,13 @@ export class YT {
         })
         const stream = createWriteStream(videoFilename)
         ytdl(this.url, {
-            quality: 'highestvideo'
+            quality: quality === 'high' ? 'highestvideo' : 'lowestvideo'
         }).pipe(stream)
         videoFilename = await new Promise((resolve, reject) => {
             stream.on('finish', () => resolve(videoFilename))
             stream.on('error', (error) => reject(error && console.log(error)))
         })
-        await this.utils.exec(
-            `ffmpeg -i ${videoFilename} -i ${audioFilename} -c:v copy -c:a aac ${filename}`
-        )
+        await this.utils.exec(`ffmpeg -i ${videoFilename} -i ${audioFilename} -c:v copy -c:a aac ${filename}`)
         const buffer = await readFile(filename)
         Promise.all([unlink(videoFilename), unlink(audioFilename), unlink(filename)])
         return buffer

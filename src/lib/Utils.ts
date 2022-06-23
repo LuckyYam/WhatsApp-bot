@@ -5,7 +5,6 @@ import { exec } from 'child_process'
 import { readFile, unlink, writeFile } from 'fs-extra'
 import regex from 'emoji-regex'
 import getUrls from 'get-urls'
-import { YT } from '.'
 
 export class Utils {
     public generateRandomHex = (): string => `#${(~~(Math.random() * (1 << 24))).toString(16)}`
@@ -50,6 +49,15 @@ export class Utils {
         return buffer
     }
 
+    public mp3ToOpus = async (mp3: Buffer): Promise<Buffer> => {
+        const filename = `${tmpdir()}/${Math.random().toString(36)}`
+        await writeFile(`${filename}.mp3`, mp3)
+        await this.exec(`ffmpeg -i ${filename}.mp3 -c:a libopus ${filename}.opus`)
+        const buffer = await readFile(`${filename}.opus`)
+        Promise.all([unlink(`${filename}.mp3`), unlink(`${filename}.opus`)])
+        return buffer
+    }
+
     public gifToMp4 = async (gif: Buffer): Promise<Buffer> => {
         const filename = `${tmpdir()}/${Math.random().toString(36)}`
         await writeFile(`${filename}.gif`, gif)
@@ -60,8 +68,6 @@ export class Utils {
         Promise.all([unlink(`${filename}.gif`), unlink(`${filename}.mp4`)])
         return buffer
     }
-
-    public YT = (url: string, type: 'video' | 'audio'): YT => new YT(url, type)
 
     public fetch = async <T>(url: string): Promise<T> => (await axios.get(url)).data
 

@@ -55,11 +55,12 @@ export class Client extends (EventEmitter as new () => TypedEventEmitter<Events>
             const M = new Message(messages[0], this)
             if (M.type === 'protocolMessage' || M.type === 'senderKeyDistributionMessage') return void null
             if (M.stubType && M.stubParameters) {
-                const emitParticipantsUpdate = (action: ParticipantAction): boolean => this.emit('participants_update', {
-                    jid: M.from,
-                    participants: M.stubParameters as string[],
-                    action
-                })
+                const emitParticipantsUpdate = (action: ParticipantAction): boolean =>
+                    this.emit('participants_update', {
+                        jid: M.from,
+                        participants: M.stubParameters as string[],
+                        action
+                    })
                 switch (M.stubType) {
                     case proto.WebMessageInfo.WebMessageInfoStubType.GROUP_CREATE:
                         return void this.emit('new_group_joined', {
