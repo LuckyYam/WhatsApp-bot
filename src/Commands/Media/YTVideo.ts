@@ -31,7 +31,13 @@ export default class extends BaseCommand {
         return void (await M.reply(video, 'video', undefined, undefined, text).catch(async () => {
             await M.reply("Sending the video as Document as the video's too big")
             setTimeout(async () => {
-                await M.reply(await this.client.utils.getBuffer(videoDetails.thumbnails[0].url), 'image', undefined, undefined, text)
+                await M.reply(
+                    await this.client.utils.getBuffer(videoDetails.thumbnails[0].url),
+                    'image',
+                    undefined,
+                    undefined,
+                    text
+                )
                 return void (await M.reply(
                     video,
                     'document',
