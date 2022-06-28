@@ -23,7 +23,7 @@ export class EventHandler {
         this.client.log(
             `${chalk.blueBright('EVENT')} ${chalk.green(
                 `${this.client.utils.capitalize(event.action)}[${event.participants.length}]`
-            )} in ${chalk.cyanBright(group.subject)}`
+            )} in ${chalk.cyanBright(`$`)}`
         )
         const { events } = await this.client.DB.getGroup(event.jid)
         if (
