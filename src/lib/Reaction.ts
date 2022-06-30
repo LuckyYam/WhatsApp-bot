@@ -1,7 +1,7 @@
 import { Utils } from '.'
 
 enum baseUrls {
-    'waifu.pics' = 'https://api.waifu.pics/type/sfw/',
+    'waifu.pics' = 'https://api.waifu.pics/sfw/',
     'nekos.life' = 'https://nekos.life/api/v2/img/',
     'nekos.best' = 'https://nekos.best/api/v2/'
 }
