@@ -29,9 +29,7 @@ export default class extends BaseCommand {
             bio = ''
         }
         const { banned, experience, level, tag } = await this.client.DB.getUser(user)
-        const admin = this.client.utils.capitalize(
-            `${user !== M.sender.jid ? await this.client.isAdmin({ group: M.from, jid: user }) : M.sender.isAdmin}`
-        )
+        const admin = this.client.utils.capitalize(`${M.groupMetadata?.admins?.includes(user) || false}`)
         const { rank } = getStats(level)
         return void M.reply(
             pfp,

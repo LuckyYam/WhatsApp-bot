@@ -12,7 +12,7 @@
   "repository": "https://github.com/LuckyYam/WhatsApp-bot.git",
   "success_url": "/",
   "env": {
-    "NAME": {
+    "BOT_NAME": {
         "description": "Name of your bot"
     },
     "PREFIX": {
@@ -38,6 +38,9 @@
     },
     {
       "url": "https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest.git"
+    },
+    {
+      "url": "https://github.com/ItsJimi/heroku-buildpack-pm2.git"
     }
   ]
 }

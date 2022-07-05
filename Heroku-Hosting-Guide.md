@@ -18,7 +18,7 @@
     | MODS | BOT_ADMINS_NUMBER (should be seperated by a comma and a space) |
     | MONGO_URI | YOUR_CLUSTER_URI |
  - `PREFIX`: Prefix of the bot
- - `NAME`: Name of the bot
+ - `BOT_NAME`: Name of the bot
  - `MONGO_URI`: A secret String for MongoDB connection. (Required)
  - `MODS`: Number of the users who should be the admins of the bot (should be in international format without "+" and multiple numbers should be separated by a comma  and a space). Example - 1234567890, 91245670325 (you shouldn't add "@s.whatsapp.net" at the end of each numbers)
  - `SESSION`: Session of the bot

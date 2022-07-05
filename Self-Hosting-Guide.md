@@ -31,12 +31,13 @@
 
  ```env
  PREFIX=PREFIX_OF_THE_BOT
+ BOT_NAME=NAME
  SESSION=YOUR_SESSION
  MONGO_URI=YOUR_CLUSTER_URI
  MODS=BOT_ADMINS_NUMBER (should be seperated by a comma and a space)
  ```
  - `PREFIX`: Prefix of the bot
- - `NAME`: Name of the bot
+ - `BOT_NAME`: Name of the bot
  - `MONGO_URI`: A secret String for MongoDB connection. (Required)
  - `MODS`: Number of the users who should be the admins of the bot (should be in international format without "+" and multiple numbers must be separated by a comma ", ")
  - `SESSION`: Session of the bot

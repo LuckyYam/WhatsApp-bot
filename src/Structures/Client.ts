@@ -23,7 +23,7 @@ export class Client extends (EventEmitter as new () => TypedEventEmitter<Events>
         super()
         Config()
         this.config = {
-            name: process.env.NAME || 'Bot',
+            name: process.env.BOT_NAME || 'Bot',
             session: process.env.SESSION || 'SESSION',
             prefix: process.env.PREFIX || ':',
             mods: (process.env.MODS || '').split(', ').map((user) => `${user}@s.whatsapp.net`),
@@ -123,14 +123,6 @@ export class Client extends (EventEmitter as new () => TypedEventEmitter<Events>
     public config: IConfig
 
     public contact = new Contact(this)
-
-    public isAdmin = async (options: { group: string; jid: string }): Promise<boolean> => {
-        const data = (await this.client.groupMetadata(options.group)).participants
-        const index = data.findIndex((x) => x.id === options.jid)
-        if (index < -1) return false
-        const admin = data[index] && data[index].admin !== undefined && data[index].admin !== null
-        return admin
-    }
 
     public correctJid = (jid: string): string => `${jid.split('@')[0].split(':')[0]}@s.whatsapp.net`
 

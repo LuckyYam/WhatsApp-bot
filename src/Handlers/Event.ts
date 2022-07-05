@@ -1,4 +1,5 @@
 import chalk from 'chalk'
+import { delay } from '@adiwajshing/baileys'
 import { Client } from '../Structures'
 import { IEvent } from '../Types'
 
@@ -10,6 +11,7 @@ export class EventHandler {
             subject: '',
             description: ''
         }
+        await delay(1500)
         await this.client
             .groupMetadata(event.jid)
             .then((res) => {
