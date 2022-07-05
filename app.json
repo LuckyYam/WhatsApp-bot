@@ -38,6 +38,9 @@
     },
     {
       "url": "https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest.git"
+    },
+    {
+      "url": "https://github.com/ItsJimi/heroku-buildpack-pm2.git"
     }
   ]
 }
