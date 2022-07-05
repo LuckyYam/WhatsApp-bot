@@ -12,7 +12,7 @@
   "repository": "https://github.com/LuckyYam/WhatsApp-bot.git",
   "success_url": "/",
   "env": {
-    "NAME": {
+    "BOT_NAME": {
         "description": "Name of your bot"
     },
     "PREFIX": {
