@@ -17,7 +17,7 @@ export class MessageHandler {
             return void this.client.log(
                 `${chalk.cyanBright('Message')} from ${chalk.yellowBright(M.sender.username)} in ${chalk.blueBright(
                     title
-                )}`
+                )} [${M.from}]`
             )
         this.client.log(
             `${chalk.cyanBright(`Command ${args[0]}[${args.length - 1}]`)} from ${chalk.yellowBright(

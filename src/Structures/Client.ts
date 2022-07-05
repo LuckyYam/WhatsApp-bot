@@ -7,7 +7,8 @@ import Baileys, {
     fetchLatestBaileysVersion,
     ParticipantAction,
     proto,
-    WACallEvent
+    WACallEvent,
+    delay
 } from '@adiwajshing/baileys'
 import P from 'pino'
 import { connect } from 'mongoose'
@@ -125,6 +126,7 @@ export class Client extends (EventEmitter as new () => TypedEventEmitter<Events>
     public contact = new Contact(this)
 
     public isAdmin = async (options: { group: string; jid: string }): Promise<boolean> => {
+        await delay(1500)
         const data = (await this.client.groupMetadata(options.group)).participants
         const index = data.findIndex((x) => x.id === options.jid)
         if (index < -1) return false
