@@ -32,7 +32,7 @@ export class Database {
         jid: string,
         field: keyof UserSchema,
         method: 'inc' | 'set',
-        update: boolean | number | string
+        update: UserSchema[typeof field]
     ): Promise<void> => {
         await this.getUser(jid)
         await this.user.updateOne({ jid }, { [`$${method}`]: { [field]: update } })
@@ -90,3 +90,5 @@ export class Database {
 
     public disabledCommands = disabledCommandsSchema
 }
+
+type valueof<T> = T[keyof T]
