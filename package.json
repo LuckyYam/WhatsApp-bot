@@ -12,9 +12,9 @@
   "license": "AGPL-3.0",
   "scripts": {
     "format": "prettier --write --config .prettierrc.json \"src/**/*.ts\"",
-    "start": "npm i - g pm2 & pm2 start dist/bot.js & pm2 save & pm2 logs bot",
-    "build": "yarn rimraf dist/ & yarn tsc -p .",
-    "postinstall": "yarn build"
+    "start": "pm2 start dist/bot.js && pm2 save && pm2 logs bot",
+    "build": "yarn rimraf dist/ && yarn tsc -p .",
+    "postinstall": "yarn build && npm i -g pm2 "
   },
   "bugs": {
     "url": "https://github.com/LuckyYam/WhatsApp-bot/issues"
