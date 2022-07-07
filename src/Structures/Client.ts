@@ -40,12 +40,19 @@ export class Client extends (EventEmitter as new () => TypedEventEmitter<Events>
         this.log('Connected to the Database')
         const { useDatabaseAuth } = new AuthenticationFromDatabase(this.config.session)
         const { saveState, state, clearState } = await useDatabaseAuth()
+        const { version } = await fetchLatestBaileysVersion()
         this.client = Baileys({
-            version: (await fetchLatestBaileysVersion()).version,
+            version,
             printQRInTerminal: true,
             auth: state,
             logger: P({ level: 'fatal' }),
-            browser: ['WhatsApp-bot', 'fatal', '1.0.0']
+            browser: ['WhatsApp-bot', 'fatal', '1.0.0'],
+            getMessage: async (key) => {
+                return {
+                    conversation: ''
+                }
+            },
+            msgRetryCounterMap: {}
         })
         for (const method of Object.keys(this.client))
             this[method as keyof Client] = this.client[method as keyof client]
