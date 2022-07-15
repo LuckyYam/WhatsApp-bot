@@ -12,10 +12,9 @@
   "license": "AGPL-3.0",
   "scripts": {
     "format": "prettier --write --config .prettierrc.json \"src/**/*.ts\"",
-    "start": "pm2 start dist/bot.js && pm2 save && pm2 logs bot",
+    "start": "pm2 start dist/bot.js --node-args=\"--max-old-space-size=4096\" && pm2 save && pm2 logs bot",
     "build": "yarn rimraf dist/ && yarn tsc -p .",
-    "postinstall": "yarn build",
-    "preinstall": "npm i -g pm2 --save"
+    "postinstall": "yarn build"
   },
   "bugs": {
     "url": "https://github.com/LuckyYam/WhatsApp-bot/issues"
@@ -29,6 +28,8 @@
     "@adiwajshing/baileys": "^4.2.0",
     "@adiwajshing/keyed-db": "^0.2.4",
     "@hapi/boom": "^10.0.0",
+    "@shineiichijo/anime-news-network-scraper": "^1.0.0",
+    "@shineiichijo/canvas-chan": "^1.0.1",
     "@shineiichijo/marika": "^2.0.3",
     "@typegoose/typegoose": "^9.9.0",
     "axios": "^0.27.2",
