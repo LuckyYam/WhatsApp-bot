@@ -186,10 +186,10 @@
   resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
   integrity sha512-Vvn3zZrhQZkkBE8LSuW3em98c0FwgO4nxzv6OdSxPKJIEKY2bGbHn+mhGIPerzI4twdxaP8/0+06HBpwf345Lw==
 
-"@shineiichijo/anime-news-network-scraper@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@shineiichijo/anime-news-network-scraper/-/anime-news-network-scraper-1.0.0.tgz#2e6202e25ecd7bc64f096777ecb0479ec3758f6a"
-  integrity sha512-luCbeUjDhYvI874NFoEVHQr5Sp7BHJe/9Sd6D6TamJ2MfdtI55f3j5ENK/BIdsPUVNptzZZ8D6SuvaswE0swLQ==
+"@shineiichijo/anime-news-network-scraper@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@shineiichijo/anime-news-network-scraper/-/anime-news-network-scraper-1.0.1.tgz#1a178f3e2a67c77f09dbbc543d3e8aea331d3777"
+  integrity sha512-MemVP29p1RgntilFd6lUMTMZ98HAVduSmlpJTbixdwK3feTtqT3CyTjBJF+yh01ZDdu3GRZH7Qh3VPiFU8dP4g==
   dependencies:
     axios "^0.27.2"
     cheerio "^1.0.0-rc.12"

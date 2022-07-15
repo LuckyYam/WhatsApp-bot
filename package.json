@@ -28,7 +28,7 @@
     "@adiwajshing/baileys": "^4.2.0",
     "@adiwajshing/keyed-db": "^0.2.4",
     "@hapi/boom": "^10.0.0",
-    "@shineiichijo/anime-news-network-scraper": "^1.0.0",
+    "@shineiichijo/anime-news-network-scraper": "^1.0.1",
     "@shineiichijo/canvas-chan": "^1.0.1",
     "@shineiichijo/marika": "^2.0.3",
     "@typegoose/typegoose": "^9.9.0",
