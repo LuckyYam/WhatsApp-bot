@@ -3,8 +3,7 @@ import {
     MessageType,
     MediaType,
     AnyMessageContent,
-    downloadContentFromMessage,
-    delay
+    downloadContentFromMessage
 } from '@adiwajshing/baileys'
 import { Client } from '.'
 import { ISender, DownloadableMessage, IGroup } from '../Types'
@@ -107,7 +106,6 @@ export class Message {
 
     public simplify = async (): Promise<Message> => {
         if (this.chat === 'dm') return this
-        await delay(1500)
         return await this.client
             .groupMetadata(this.from)
             .then((res) => {
