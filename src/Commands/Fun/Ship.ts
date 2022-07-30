@@ -41,6 +41,7 @@ export default class extends BaseCommand {
         caption += `\t\t---------------------------------\n`
         caption += `@${users[0].split('@')[0]}  x  @${users[1].split('@')[0]}\n`
         caption += `\t\t---------------------------------\n`
+        caption += `\t\t\t\t\t${percentage < 40 ? '💔' : percentage < 75 ? '❤' : '💗'} *ShipCent: ${percentage}%*\n`
         caption += text
         return void (await M.reply(await image.build(), 'image', undefined, undefined, caption, [users[0], users[1]]))
     }

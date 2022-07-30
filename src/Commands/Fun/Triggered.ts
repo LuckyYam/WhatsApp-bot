@@ -7,7 +7,8 @@ import { Command, Message, BaseCommand } from '../../Structures'
     cooldown: 10,
     usage: 'triggered [tag/quote user or caption/quote image]',
     category: 'fun',
-    exp: 25
+    exp: 25,
+    aliases: ['trigger']
 })
 export default class extends BaseCommand {
     public override execute = async (M: Message): Promise<void> => {
@@ -41,6 +42,10 @@ export default class extends BaseCommand {
             }
             buffer = pfpUrl ? await this.client.utils.getBuffer(pfpUrl) : (this.client.assets.get('404') as Buffer)
         }
-        return void (await M.reply(await new Triggered(buffer).build(), 'video', true))
+        return void (await M.reply(
+            await this.client.utils.gifToMp4(await new Triggered(buffer).build()),
+            'video',
+            true
+        ))
     }
 }

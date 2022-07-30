@@ -32,8 +32,8 @@ export default class extends BaseCommand {
         if (percentage >= 0 && percentage < 10) text = 'Fake friends'
         else if (percentage >= 10 && percentage < 25) text = 'Awful'
         else if (percentage >= 25 && percentage < 40) text = 'Very Bad'
-        else if (percentage >= 40 && percentage < 55) text = 'Average'
-        else if (percentage >= 55 && percentage < 75) text = 'Nice'
+        else if (percentage >= 40 && percentage < 50) text = 'Average'
+        else if (percentage >= 50 && percentage < 75) text = 'Nice'
         else if (percentage >= 75 && percentage < 90) text = 'Besties'
         else if (percentage >= 90) text = 'Soulmates'
         const image = new Friendship(friendshipArray, percentage, text)
@@ -41,6 +41,7 @@ export default class extends BaseCommand {
         caption += `\t\t---------------------------------\n`
         caption += `@${users[0].split('@')[0]}  &  @${users[1].split('@')[0]}\n`
         caption += `\t\t---------------------------------\n`
+        caption += `\t\t\t\t\t${percentage < 40 ? '📉' : percentage < 75 ? '📈' : '💫'} *Percentage: ${percentage}%*\n`
         caption += text
         return void (await M.reply(await image.build(), 'image', undefined, undefined, caption, [users[0], users[1]]))
     }
