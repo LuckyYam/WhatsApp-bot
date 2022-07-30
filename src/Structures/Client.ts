@@ -46,13 +46,14 @@ export class Client extends (EventEmitter as new () => TypedEventEmitter<Events>
             printQRInTerminal: true,
             auth: state,
             logger: P({ level: 'fatal' }),
-            browser: ['WhatsApp-bot', 'fatal', '1.0.0'],
+            browser: ['WhatsApp-bot', 'fatal', '4.0.0'],
             getMessage: async (key) => {
                 return {
                     conversation: ''
                 }
             },
-            msgRetryCounterMap: {}
+            msgRetryCounterMap: {},
+            markOnlineOnConnect: false
         })
         for (const method of Object.keys(this.client))
             this[method as keyof Client] = this.client[method as keyof client]
@@ -145,11 +146,6 @@ export class Client extends (EventEmitter as new () => TypedEventEmitter<Events>
 
     public condition!: 'connected' | 'connecting' | 'logged_out'
 
-    public appPatch!: client['appPatch']
-    public assertSessions!: client['assertSessions']
-    public authState!: client['authState']
-    public chatModify!: client['chatModify']
-    public emitEventsFromMap!: client['emitEventsFromMap']
     public end!: client['end']
     public ev!: client['ev']
     public fetchBlocklist!: client['fetchBlocklist']
@@ -176,11 +172,11 @@ export class Client extends (EventEmitter as new () => TypedEventEmitter<Events>
     public groupParticipantsUpdate!: client['groupParticipantsUpdate']
     public logout!: client['logout']
     public presenceSubscribe!: client['presenceSubscribe']
-    public processMessage!: client['processMessage']
     public productDelete!: client['productDelete']
     public productCreate!: client['productCreate']
     public productUpdate!: client['productUpdate']
     public profilePictureUrl!: client['profilePictureUrl']
+    public updateMediaMessage!: client['updateMediaMessage']
     public query!: client['query']
     public readMessages!: client['readMessages']
     public refreshMediaConn!: client['refreshMediaConn']
@@ -199,7 +195,6 @@ export class Client extends (EventEmitter as new () => TypedEventEmitter<Events>
     public updateBlockStatus!: client['updateBlockStatus']
     public onUnexpectedError!: client['onUnexpectedError']
     public onWhatsApp!: client['onWhatsApp']
-    public updateMediaMessage!: client['updateMediaMessage']
     public uploadPreKeys!: client['uploadPreKeys']
     public updateProfilePicture!: client['updateProfilePicture']
     public user!: client['user']
@@ -208,6 +203,14 @@ export class Client extends (EventEmitter as new () => TypedEventEmitter<Events>
     public waitForSocketOpen!: client['waitForSocketOpen']
     public waitForConnectionUpdate!: client['waitForConnectionUpdate']
     public waUploadToServer!: client['waUploadToServer']
+    public getPrivacyTokens!: client['getPrivacyTokens']
+    public assertSessions!: client['assertSessions']
+    public processingMutex!: client['processingMutex']
+    public appPatch!: client['appPatch']
+    public authState!: client['authState']
+    public upsertMessage!: client['upsertMessage']
+    public updateProfileStatus!: client['updateProfileStatus']
+    public chatModify!: client['chatModify']
 }
 
 type Events = {

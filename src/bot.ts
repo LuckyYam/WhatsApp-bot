@@ -1,7 +1,7 @@
 import { Client } from './Structures'
 import { MessageHandler, AssetHandler, CallHandler, EventHandler } from './Handlers'
 
-(async (): Promise<void> => {
+;(async (): Promise<void> => {
     const client = new Client()
 
     await client.start()

@@ -68,7 +68,7 @@ export class MessageHandler {
     private moderate = async (M: Message): Promise<void> => {
         if (M.chat !== 'group') return void null
         const { mods } = await this.client.DB.getGroup(M.from)
-        const isAdmin = M.groupMetadata?.admins?.includes(this.client.correctJid(this.client.user.id))
+        const isAdmin = M.groupMetadata?.admins?.includes(this.client.correctJid(this.client.user?.id || ''))
         if (!mods || M.sender.isAdmin || !isAdmin) return void null
         const urls = this.client.utils.extractUrls(M.content)
         if (urls.length > 0) {

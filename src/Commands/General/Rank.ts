@@ -17,12 +17,13 @@ export default class extends BaseCommand {
         while (users.length < 1) users.push(M.sender.jid)
         const user = users[0]
         const username = user === M.sender.jid ? M.sender.username : this.client.contact.getContact(user).username
-        let pfp!: Buffer
+        let pfpUrl: string | undefined
         try {
-            pfp = await this.client.utils.getBuffer(await this.client.profilePictureUrl(user, 'image'))
+            pfpUrl = await this.client.profilePictureUrl(user, 'image')
         } catch {
-            pfp = this.client.assets.get('404') as Buffer
+            pfpUrl = undefined
         }
+        const pfp = pfpUrl ? await this.client.utils.getBuffer(pfpUrl) : (this.client.assets.get('404') as Buffer)
         const { experience, level, tag } = await this.client.DB.getUser(user)
         const { requiredXpToLevelUp, rank } = getStats(level)
         const card = await new Rank()
