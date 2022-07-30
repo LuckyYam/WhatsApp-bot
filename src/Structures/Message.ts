@@ -1,10 +1,4 @@
-import {
-    proto,
-    MessageType,
-    MediaType,
-    AnyMessageContent,
-    downloadContentFromMessage
-} from '@adiwajshing/baileys'
+import { proto, MessageType, MediaType, AnyMessageContent, downloadContentFromMessage } from '@adiwajshing/baileys'
 import { Client } from '.'
 import { ISender, DownloadableMessage, IGroup } from '../Types'
 
@@ -14,7 +8,11 @@ export class Message {
         this.from = M.key.remoteJid || ''
         this.chat = this.from.endsWith('@s.whatsapp.net') ? 'dm' : 'group'
         const { jid, username, isMod } = this.client.contact.getContact(
-            this.chat === 'dm' ? this.client.correctJid(this.from) : this.client.correctJid(M.key.participant || '')
+            this.chat === 'dm' && this.M.key.fromMe
+                ? this.client.correctJid(this.client.user?.id || '')
+                : this.chat === 'group'
+                ? this.client.correctJid(M.key.participant || '')
+                : this.client.correctJid(this.from)
         )
         this.sender = {
             jid,
@@ -94,7 +92,8 @@ export class Message {
                             : supportedMediaType.includes(Object.keys(quotedMessage?.buttonsMessage || {})[1]),
                     key: {
                         remoteJid: this.from,
-                        fromMe: this.client.correctJid(participant) === this.client.correctJid(this.client.user.id),
+                        fromMe:
+                            this.client.correctJid(participant) === this.client.correctJid(this.client.user?.id || ''),
                         id: stanzaId,
                         participant
                     }
@@ -140,7 +139,7 @@ export class Message {
         thumbnail?: Buffer,
         fileName?: string,
         options: { sections?: proto.ISection[]; buttonText?: string; title?: string } = {}
-    ): Promise<proto.WebMessageInfo> => {
+    ): Promise<ReturnType<typeof this.client.sendMessage>> => {
         if (type === 'text' && Buffer.isBuffer(content)) throw new Error('Cannot send Buffer as a text message')
         return this.client.sendMessage(
             this.from,
@@ -168,7 +167,10 @@ export class Message {
         )
     }
 
-    public react = async (emoji: string, key: proto.IMessageKey = this.M.key): Promise<proto.WebMessageInfo> =>
+    public react = async (
+        emoji: string,
+        key: proto.IMessageKey = this.M.key
+    ): Promise<ReturnType<typeof this.client.sendMessage>> =>
         await this.client.sendMessage(this.from, {
             react: {
                 text: emoji,

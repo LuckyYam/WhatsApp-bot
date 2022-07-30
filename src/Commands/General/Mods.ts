@@ -14,9 +14,9 @@ export default class extends BaseCommand {
         if (!this.client.config.mods.length) return void reply('*[UNMODERATED]*')
         let text = `🤍 *${this.client.config.name} Moderators* 🖤\n`
         for (let i = 0; i < this.client.config.mods.length; i++)
-            text += `\n*#${i + 1}*\n🎐 *Username:* ${this.client.contact.getContact(
-                this.client.config.mods[i]
-            ).username}\n🔗 *Contact: https://wa.me/+${this.client.config.mods[i].split('@')[0]}*`
-        return void await reply(text)
+            text += `\n*#${i + 1}*\n🎐 *Username:* ${
+                this.client.contact.getContact(this.client.config.mods[i]).username
+            }\n🔗 *Contact: https://wa.me/+${this.client.config.mods[i].split('@')[0]}*`
+        return void (await reply(text))
     }
 }

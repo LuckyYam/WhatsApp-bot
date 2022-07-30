@@ -31,7 +31,9 @@ export class EventHandler {
         if (
             !events ||
             (event.action === 'remove' &&
-                event.participants.includes(`${this.client.user.id.split('@')[0].split(':')[0]}@s.whatsapp.net`))
+                event.participants.includes(
+                    `${(this.client.user?.id || '').split('@')[0].split(':')[0]}@s.whatsapp.net`
+                ))
         )
             return void null
         const text =
@@ -49,12 +51,15 @@ export class EventHandler {
                 ? `Ara Ara, looks like *@${event.participants[0].split('@')[0]}* got Demoted`
                 : `Congratulations *@${event.participants[0].split('@')[0]}*, you're now an admin`
         if (event.action === 'add') {
-            let image!: Buffer
+            let imageUrl: string | undefined
             try {
-                image = await this.client.utils.getBuffer(await this.client.profilePictureUrl(event.jid))
+                imageUrl = await this.client.profilePictureUrl(event.jid)
             } catch (error) {
-                image = this.client.assets.get('404') as Buffer
+                imageUrl = undefined
             }
+            const image = imageUrl
+                ? await this.client.utils.getBuffer(imageUrl)
+                : (this.client.assets.get('404') as Buffer)
             return void (await this.client.sendMessage(event.jid, {
                 image: image,
                 mentions: event.participants,
