@@ -44,6 +44,9 @@ export class MessageHandler {
         if (M.chat === 'dm' && !command.config.dm) return void M.reply('This command can only be used in groups')
         if (command.config.category === 'moderation' && !M.sender.isAdmin)
             return void M.reply('This command can only be used by the group admins')
+        const { nsfw } = await this.client.DB.getGroup(M.from)
+        if (command.config.category === 'nsfw' && !nsfw)
+            return void M.reply('This command can only be used in NSFW enabled groups')
         const cooldownAmount = (command.config.cooldown ?? 3) * 1000
         const time = cooldownAmount + Date.now()
         if (this.cooldowns.has(`${M.sender.jid}${command.name}`)) {

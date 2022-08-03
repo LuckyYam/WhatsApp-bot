@@ -28,7 +28,7 @@ export class Message {
                 ? supportedMediaType.includes(Object.keys(M.message?.buttonsMessage || {})[0])
                 : supportedMediaType.includes(this.type)
         const getContent = (): string => {
-            if (M.message?.buttonsResponseMessage) return M.message?.buttonsResponseMessage?.selectedDisplayText || ''
+            if (M.message?.buttonsResponseMessage) return M.message?.buttonsResponseMessage?.selectedButtonId || ''
             if (M.message?.listResponseMessage)
                 return M.message?.listResponseMessage?.singleSelectReply?.selectedRowId || ''
             return M.message?.conversation
