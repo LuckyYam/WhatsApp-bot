@@ -31,6 +31,7 @@
     "@shineiichijo/anime-news-network-scraper": "^1.0.1",
     "@shineiichijo/canvas-chan": "^1.0.1",
     "@shineiichijo/marika": "^2.0.3",
+    "@shineiichijo/nhentai-ts": "^0.0.2",
     "@typegoose/typegoose": "^9.9.0",
     "axios": "^0.27.2",
     "canvacord": "5.2.3",
