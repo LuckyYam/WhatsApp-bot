@@ -16,7 +16,7 @@ export default class extends BaseCommand {
          const weeb = users[0]
          if (weeb === this.client.user?.id) return void (await M.reply('I can\'t demite myself'))
       await this.client.groupParticipantsUpdate(
-     M.from, [weeb],"demote" 
+     M.from, [weeb],"demote"
       )
        M.reply('📈Successfully demoted')
     }

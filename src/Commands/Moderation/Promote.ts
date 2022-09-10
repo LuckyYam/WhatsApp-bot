@@ -16,7 +16,7 @@ export default class extends BaseCommand {
          const weeb = users[0]
          if (weeb === this.client.user?.id) return void (await M.reply('I can\'t promote myself'))
       await this.client.groupParticipantsUpdate(
-      M.from, [weeb],"promote" 
+      M.from, [weeb],"promote"
       )
        M.reply('🌟Successfully promoted')
     }
