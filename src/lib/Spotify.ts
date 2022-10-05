@@ -1,4 +1,4 @@
-import spotify from 'spotifydl-core'
+import spotify from 'spotifydl-x'
 import TrackDetails from 'spotifydl-core/dist/lib/details/Track'
 import { Utils } from '.'
 
