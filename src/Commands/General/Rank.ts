@@ -5,8 +5,8 @@ import { BaseCommand, Command, Message } from '../../Structures'
 @Command('rank', {
     description: "Displays user's rank",
     category: 'general',
-    exp: 20,
-    cooldown: 10,
+    exp: 100,
+    cooldown: 5,
     aliases: ['card'],
     usage: 'rank [tag/quote user]'
 })
